@@ -1,4 +1,12 @@
-import { createTag, selectTag, setTagsSelectionMode, tagPicture, unselectTag, untagPicture } from '../actions/app';
+import {
+  createTag,
+  selectTag,
+  setPicturesSelection,
+  setTagsSelectionMode,
+  tagPicture,
+  unselectTag,
+  untagPicture
+} from '../actions/app';
 import { connect } from 'react-redux';
 import Component from '../components/Library';
 import { arrayToIndex } from '../utils/js';
@@ -24,6 +32,9 @@ const mapDispatchToProps = dispatch => {
     },
     selectTag: name => {
       dispatch(selectTag(name));
+    },
+    setPicturesSelection: pictureSelection => {
+      dispatch(setPicturesSelection(pictureSelection));
     },
     setTagsSelectionMode: mode => {
       dispatch(setTagsSelectionMode(mode));

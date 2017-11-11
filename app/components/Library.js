@@ -225,6 +225,7 @@ export default class extends PureComponent {
             _ => props.pictures[_]
           );
     const rowCount = pictures.length;
+    this.props.setPicturesSelection(pictures.map(_ => _.id));
 
     let key = 0;
 

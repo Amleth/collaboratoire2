@@ -11,6 +11,7 @@ export const FOCUS_ANNOTATION = 'FOCUS_ANNOTATION';
 export const NEXT_PICTURE_IN_SELECTION = 'NEXT_PICTURE_IN_SELECTION';
 export const PREVIOUS_PICTURE_IN_SELECTION = 'PREVIOUS_PICTURE_IN_SELECTION';
 export const SELECT_TAG = 'SELECT_TAG';
+export const SET_PICTURES_SELECTION = 'SET_PICTURES_SELECTION';
 export const SET_TAGS_SELECTION_MODE = 'SET_TAGS_SELECTION_MODE';
 export const TAG_ANNOTATION = 'TAG_ANNOTATION';
 export const TAG_PICTURE = 'TAG_PICTURE';
@@ -106,6 +107,11 @@ export const previousPictureInSelection = () => ({
 export const selectTag = name => ({
   type: SELECT_TAG,
   name
+});
+
+export const setPicturesSelection = pictures_selection => ({
+  type: SET_PICTURES_SELECTION,
+  pictures_selection
 });
 
 export const setTagsSelectionMode = mode => ({
