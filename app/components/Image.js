@@ -201,7 +201,7 @@ class Image extends PureComponent {
   }
 
   componentDidMount() {
-    this.svgImage.addEventListener('load', e => this.Viewer.fitToViewer());
+    if (this.svgImage) this.svgImage.addEventListener('load', e => this.Viewer.fitToViewer());
   }
 
   componentWillReceiveProps(nextProps) {
@@ -211,6 +211,8 @@ class Image extends PureComponent {
   }
 
   render() {
+    if (!this.state.currentPicture) return null;
+
     return (
       <_Root>
         <_Header>
