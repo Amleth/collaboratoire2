@@ -1,7 +1,7 @@
 {
   "name": "collaboratoire2",
   "productName": "Collaboratoire2",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "",
   "main": "./main.prod.js",
   "author": {
