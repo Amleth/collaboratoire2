@@ -16,7 +16,7 @@ const mapStateToProps = state => {
     annotationsMeasuresLinear: state.app.annotations_measures_linear,
     annotationsRectangular: state.app.annotations_rectangular,
     annotationsPointsOfInterest: state.app.annotations_points_of_interest,
-    pictures: state.app.pictures,
+    allPictures: state.app.pictures,
     tags: state.app.tags,
     selectedTags: state.app.selected_tags,
     tagsByPicture: state.app.tags_by_picture,

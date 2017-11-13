@@ -190,7 +190,7 @@ export default class extends PureComponent {
   constructor(props) {
     super(props);
 
-    const pictures = Object.values(props.pictures);
+    const allPictures = Object.values(props.allPictures);
     const sortBy = 'sha1';
     const sortDirection = SortDirection.ASC;
     const sortedPicturesList = this._sortList({ sortBy, sortDirection });
@@ -198,12 +198,11 @@ export default class extends PureComponent {
     this.state = {
       currentPicture: sortedPicturesList[0],
       newTagName: '',
-      pictures,
-      rowCount: pictures.length,
+      allPictures,
+      rowCount: allPictures.length,
       sortBy,
       sortDirection,
       sortedPicturesList,
-      useDynamicRowHeight: false,
       windowScrollerEnabled: false
     };
 
@@ -216,15 +215,16 @@ export default class extends PureComponent {
   }
 
   render() {
-    const props = this.props;
-    const { currentPicture, sortBy, sortDirection, sortedPicturesList, useDynamicRowHeight } = this.state;
+    //TODO This is UGLY!
     const pictures =
-      props.selectedTags.length === 0
-        ? sortedPicturesList
-        : findPictures(props.tagsByPicture, props.picturesByTag, props.selectedTags, props.tagsSelectionMode).map(
-            _ => props.pictures[_]
-          );
-    const rowCount = pictures.length;
+      this.props.selectedTags.length === 0
+        ? this.state.sortedPicturesList
+        : findPictures(
+            this.props.tagsByPicture,
+            this.props.picturesByTag,
+            this.props.selectedTags,
+            this.props.tagsSelectionMode
+          ).map(_ => this.props.allPictures[_]);
     this.props.setPicturesSelection(pictures.map(_ => _.id));
 
     let key = 0;
@@ -235,9 +235,9 @@ export default class extends PureComponent {
           <_Tags>
             <_TagsHeader>
               <_TagsTitle>
-                &nbsp;TAGS ({props.tags.length}, {props.selectedTags.length} selected in{' '}
+                &nbsp;TAGS ({this.props.tags.length}, {this.props.selectedTags.length} selected in{' '}
                 <_TagsSelectionMode onClick={this.click_tagsSelectionMode}>
-                  {props.tagsSelectionMode}
+                  {this.props.tagsSelectionMode}
                 </_TagsSelectionMode>{' '}
                 mode)
               </_TagsTitle>
@@ -256,8 +256,8 @@ export default class extends PureComponent {
               </_NewTagForm>
             </_TagsHeader>
             <_AllTags>
-              {props.tags.map(_ => {
-                const selected = props.selectedTags.indexOf(_.name) !== -1;
+              {this.props.tags.map(_ => {
+                const selected = this.props.selectedTags.indexOf(_.name) !== -1;
                 return (
                   <_Tag
                     selected={selected}
@@ -272,7 +272,7 @@ export default class extends PureComponent {
               })}
             </_AllTags>
           </_Tags>
-          <_PicturesHeader>&nbsp;PICTURES ({rowCount})</_PicturesHeader>
+          <_PicturesHeader>&nbsp;PICTURES ({pictures.length})</_PicturesHeader>
         </_Header>
         <_Pictures>
           <div style={{ flex: '1 1 auto' }}>
@@ -284,12 +284,12 @@ export default class extends PureComponent {
                   height={height}
                   overscanRowCount={10}
                   rowClassName={this._rowClassName}
-                  rowCount={rowCount}
+                  rowCount={pictures.length}
                   rowGetter={({ index }) => pictures[index % pictures.length]}
                   rowHeight={20}
                   sort={this._sort}
-                  sortBy={sortBy}
-                  sortDirection={sortDirection}
+                  sortBy={this.state.sortBy}
+                  sortDirection={this.state.sortDirection}
                   width={width}
                 >
                   <Column
@@ -314,7 +314,7 @@ export default class extends PureComponent {
                             }}
                             onDrop={e => {
                               e.preventDefault();
-                              props.tagPicture(rowData.id, e.dataTransfer.getData('tagName'));
+                              this.props.tagPicture(rowData.id, e.dataTransfer.getData('tagName'));
                             }}
                             onMouseOver={e => this.setState({ currentPicture: rowData })}
                           >
@@ -335,20 +335,23 @@ export default class extends PureComponent {
                     width={0.1 * width}
                     key={key++}
                     cellRenderer={({ cellData }) =>
-                      props.tagsByPicture.hasOwnProperty(cellData) ? props.tagsByPicture[cellData].length : 0}
+                      this.props.tagsByPicture.hasOwnProperty(cellData) ? this.props.tagsByPicture[cellData].length : 0}
                   />
                 </Table>
               )}
             </AutoSizer>
           </div>
           <_Panel>
-            <img src={currentPicture && currentPicture.thumbnail} width={INSPECTOR_WIDTH - 2 * INSPECTOR_MARGIN} />
+            <img
+              src={this.state.currentPicture && this.state.currentPicture.thumbnail}
+              width={INSPECTOR_WIDTH - 2 * INSPECTOR_MARGIN}
+            />
             <Inspector
-              picture={currentPicture}
-              tags={this.props.tagsByPicture[currentPicture.id]}
-              annotationsMeasuresLinear={this.props.annotationsMeasuresLinear[currentPicture.id]}
-              annotationsRectangular={this.props.annotationsRectangular[currentPicture.id]}
-              annotationsPointsOfInterest={this.props.annotationsPointsOfInterest[currentPicture.id]}
+              picture={this.state.currentPicture}
+              tags={this.props.tagsByPicture[this.state.currentPicture.id]}
+              annotationsMeasuresLinear={this.props.annotationsMeasuresLinear[this.state.currentPicture.id]}
+              annotationsRectangular={this.props.annotationsRectangular[this.state.currentPicture.id]}
+              annotationsPointsOfInterest={this.props.annotationsPointsOfInterest[this.state.currentPicture.id]}
             />
           </_Panel>
         </_Pictures>
@@ -399,7 +402,7 @@ export default class extends PureComponent {
   }
 
   _sortList({ sortBy, sortDirection }) {
-    const sorted = lodash.sortBy(this.props.pictures, [sortBy]);
+    const sorted = lodash.sortBy(this.props.allPictures, [sortBy]);
 
     return sortDirection === SortDirection.DESC ? lodash.reverse(sorted) : sorted;
   }
