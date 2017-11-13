@@ -26,24 +26,97 @@ export const readExif = async file => exif.read(file);
 // LIBRARY
 //
 
+/*
+// TODO
+On collecte toutes les images du disque.
+Pour chacune d'entre elles, on regarde si elle est dans le cache ou pas.
+Si oui, on ne fait rien.
+Si non, on construit son entrée dans le cache (metadonnées + miniature).
+*/
 export const initPicturesLibrary = async (cache_file, thumbnails_dir, pictures_directories) => {
-  // Let's build the pictures cache
+  //
+  // Pictures cache initialization
+  //
 
-  let pictures_cache = null;
+  let pictures_cache = {};
+
   if (fs.existsSync(cache_file)) {
     pictures_cache = JSON.parse(fs.readFileSync(cache_file));
-  } else {
-    pictures_cache = {};
-    const files = collectPictureFilesInDirectories(pictures_directories);
-    for (const f of files) {
-      await makePictureObjectFromFile(f, pictures_cache);
+  }
+
+  // We want to clean the cache from files that no longer exist on user's hard
+  // drive. Consequently, we keep track of files SHA1: each encountered file
+  // will leave this registry.
+  const unusedSha1 = {};
+  for (const sha1 in pictures_cache) {
+    unusedSha1[sha1] = null;
+  }
+
+  //
+  // File metadata collector helper
+  //
+
+  const makePictureObjectFromFile = async file => {
+    // We always need to compute the picture file SHA1, because it's the way we
+    // retrieve files metadata from the cache.
+    const sha1 = await getSHA1(file.path);
+
+    // Is the picture file in the cache or not?
+    if (!pictures_cache[sha1]) {
+      // We compute all the "technical" metadata.
+      let exif = await readExif(file.path);
+      let dpix =
+        exif && exif.hasOwnProperty('image') && exif.image.hasOwnProperty('XResolution')
+          ? exif.image.XResolution
+          : null;
+      let dpiy =
+        exif && exif.hasOwnProperty('image') && exif.image.hasOwnProperty('YResolution')
+          ? exif.image.YResolution
+          : null;
+      if (!dpix && !dpiy) dpix = dpiy = getJPEGPPI(file.path);
+      const dimensions = await sizeOf(file.path);
+      const { width, height } = dimensions;
+
+      pictures_cache[sha1] = {
+        files: [file.path], // an array of paths, because maybe other files will have the same SHA1, and thus the same metadata
+        file: file.path, // For now, we alse store the first encountered file for the current SHA1
+        id: chance.guid(),
+        width,
+        height,
+        sha1,
+        dpix,
+        dpiy
+      };
+    } else {
+      pictures_cache[sha1].files.push(file.path);
     }
 
-    fs.writeFileSync(cache_file, JSON.stringify(pictures_cache));
+    // This is a used file SHA1
+    delete unusedSha1[sha1];
+  };
+
+  //
+  // User pictures files examination
+  //
+
+  const files = collectPictureFilesInDirectories(pictures_directories);
+  for (const f of files) {
+    await makePictureObjectFromFile(f, pictures_cache);
   }
+
+  //
+  // New cache creation
+  //
+
+  for (const sha1 in unusedSha1) {
+    delete pictures_cache[sha1];
+  }
+  fs.writeFileSync(cache_file, JSON.stringify(pictures_cache));
   const pictures_cache_array = Object.values(pictures_cache);
 
+  //
   // Thumbnails generation
+  //
 
   const resize_promises = [];
   for (const i of pictures_cache_array) {
@@ -63,7 +136,9 @@ export const initPicturesLibrary = async (cache_file, thumbnails_dir, pictures_d
     a[i].thumbnail = path.join(thumbnails_dir, `${e.id}.jpg`);
   });
 
-  // The pictures cache is now builded
+  //
+  // New cache
+  //
 
   return pictures_cache_array;
 };
@@ -74,38 +149,6 @@ const collectPictureFilesInDirectories = directories => {
   directories.map(d => (files = [...files, ...klawSync(d, { filter: filterFn })]));
 
   return files;
-};
-
-export const makePictureObjectFromFile = async (file, pictures_cache) => {
-  // We always need to compute the picture file SHA1, because it's the wat
-  // we retrieve metadata from the cache.
-  const sha1 = await getSHA1(file.path);
-
-  // Is the picture file in the cache or not?
-  if (!pictures_cache[sha1]) {
-    // We compute all the "technical" metadata.
-    let exif = await readExif(file.path);
-    let dpix =
-      exif && exif.hasOwnProperty('image') && exif.image.hasOwnProperty('XResolution') ? exif.image.XResolution : null;
-    let dpiy =
-      exif && exif.hasOwnProperty('image') && exif.image.hasOwnProperty('YResolution') ? exif.image.YResolution : null;
-    if (!dpix && !dpiy) dpix = dpiy = getJPEGPPI(file.path);
-    const dimensions = await sizeOf(file.path);
-    const { width, height } = dimensions;
-
-    pictures_cache[sha1] = {
-      files: [file.path], // an array of paths, because maybe other files will have the same SHA1, and thus the same metadata
-      file: file.path, // For now, we alse store the first encountered file for the current SHA1
-      id: chance.guid(),
-      width,
-      height,
-      sha1,
-      dpix,
-      dpiy
-    };
-  } else {
-    pictures_cache[sha1].files.push(file.path);
-  }
 };
 
 //

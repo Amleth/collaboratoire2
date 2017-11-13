@@ -54,58 +54,58 @@ logger.setOutput({ file: path.join(CACHE_DIR, 'log.log') });
   const store = configureStore(initialState);
 
   // Create some test data
-  const { createTag } = require('./actions/app');
-  for (let i = 0; i < 100; i++) {
-    store.dispatch(createTag(chance.word()));
-  }
-  const { tagPicture } = require('./actions/app');
-  for (let picture of Object.values(store.getState().app.pictures)) {
-    for (let j = 0; j < chance.d100(); j++) {
-      const tag = chance.pickone(store.getState().app.tags.map(_ => _.name));
-      store.dispatch(tagPicture(picture.id, tag));
-    }
-  }
-  const { createAnnotationMeasureLinear } = require('./actions/app');
-  for (let picture of Object.values(store.getState().app.pictures)) {
-    for (let j = 0; j < 20; j++) {
-      store.dispatch(
-        createAnnotationMeasureLinear(
-          picture.id,
-          chance.integer({ min: 0, max: picture.width }),
-          chance.integer({ min: 0, max: picture.height }),
-          chance.integer({ min: 0, max: picture.width }),
-          chance.integer({ min: 0, max: picture.height }),
-          Math.random() * 300
-        )
-      );
-    }
-  }
-  const { createAnnotationPointOfInterest } = require('./actions/app');
-  for (let picture of Object.values(store.getState().app.pictures)) {
-    for (let j = 0; j < 10; j++) {
-      store.dispatch(
-        createAnnotationPointOfInterest(
-          picture.id,
-          chance.integer({ min: 0, max: picture.width }),
-          chance.integer({ min: 0, max: picture.height })
-        )
-      );
-    }
-  }
-  const { createAnnotationRectangular } = require('./actions/app');
-  for (let picture of Object.values(store.getState().app.pictures)) {
-    for (let j = 0; j < 5; j++) {
-      store.dispatch(
-        createAnnotationRectangular(
-          picture.id,
-          chance.integer({ min: 0, max: picture.width }),
-          chance.integer({ min: 0, max: picture.height }),
-          chance.integer({ min: 0, max: picture.width / 5 }),
-          chance.integer({ min: 0, max: picture.height / 5 })
-        )
-      );
-    }
-  }
+  // const { createTag } = require('./actions/app');
+  // for (let i = 0; i < 100; i++) {
+  //   store.dispatch(createTag(chance.word()));
+  // }
+  // const { tagPicture } = require('./actions/app');
+  // for (let picture of Object.values(store.getState().app.pictures)) {
+  //   for (let j = 0; j < chance.d100(); j++) {
+  //     const tag = chance.pickone(store.getState().app.tags.map(_ => _.name));
+  //     store.dispatch(tagPicture(picture.id, tag));
+  //   }
+  // }
+  // const { createAnnotationMeasureLinear } = require('./actions/app');
+  // for (let picture of Object.values(store.getState().app.pictures)) {
+  //   for (let j = 0; j < 20; j++) {
+  //     store.dispatch(
+  //       createAnnotationMeasureLinear(
+  //         picture.id,
+  //         chance.integer({ min: 0, max: picture.width }),
+  //         chance.integer({ min: 0, max: picture.height }),
+  //         chance.integer({ min: 0, max: picture.width }),
+  //         chance.integer({ min: 0, max: picture.height }),
+  //         Math.random() * 300
+  //       )
+  //     );
+  //   }
+  // }
+  // const { createAnnotationPointOfInterest } = require('./actions/app');
+  // for (let picture of Object.values(store.getState().app.pictures)) {
+  //   for (let j = 0; j < 10; j++) {
+  //     store.dispatch(
+  //       createAnnotationPointOfInterest(
+  //         picture.id,
+  //         chance.integer({ min: 0, max: picture.width }),
+  //         chance.integer({ min: 0, max: picture.height })
+  //       )
+  //     );
+  //   }
+  // }
+  // const { createAnnotationRectangular } = require('./actions/app');
+  // for (let picture of Object.values(store.getState().app.pictures)) {
+  //   for (let j = 0; j < 5; j++) {
+  //     store.dispatch(
+  //       createAnnotationRectangular(
+  //         picture.id,
+  //         chance.integer({ min: 0, max: picture.width }),
+  //         chance.integer({ min: 0, max: picture.height }),
+  //         chance.integer({ min: 0, max: picture.width / 5 }),
+  //         chance.integer({ min: 0, max: picture.height / 5 })
+  //       )
+  //     );
+  //   }
+  // }
 
   console.log(`${new Date().getTime() - start}ms`);
 
