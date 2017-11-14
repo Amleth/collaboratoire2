@@ -9,7 +9,7 @@ import { dependencies as externals } from './app/package.json';
 export default {
   externals: Object.keys(externals || {}),
 
-    module: {
+  module: {
     rules: [
       {
         test: /\.jsx?$/,
@@ -20,13 +20,9 @@ export default {
             cacheDirectory: true
           }
         }
-      },
-      {
-        test: /\.node$/,
-        use: 'node-loader'
       }
     ]
-},
+  },
 
   output: {
     path: path.join(__dirname, 'app'),
@@ -39,11 +35,9 @@ export default {
    * Determine the array of extensions that should be used to resolve modules.
    */
   resolve: {
+    alias: { sharpdotnode: path.resolve(__dirname, './sharp.node') },
     extensions: ['.js', '.jsx', '.json'],
-    modules: [
-      path.join(__dirname, 'app'),
-      'node_modules',
-    ],
+    modules: [path.join(__dirname, 'app'), 'node_modules']
   },
 
   plugins: [
@@ -51,6 +45,6 @@ export default {
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production')
     }),
 
-    new webpack.NamedModulesPlugin(),
-  ],
+    new webpack.NamedModulesPlugin()
+  ]
 };

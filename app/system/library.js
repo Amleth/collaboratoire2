@@ -1,14 +1,13 @@
 import 'babel-polyfill';
 import Chance from 'chance';
 import crypto from 'crypto';
-import electron, { remote } from 'electron';
+import electron, { nativeImage, remote } from 'electron';
 import exif from 'fast-exif';
 import fs from 'fs-extra';
 import ImageFile from 'image-file';
 import imagesize from 'image-size';
 import klawSync from 'klaw-sync';
 import path from 'path';
-import sharp from 'sharp';
 
 var chance = new Chance();
 const sizeOf = _ => {
@@ -118,19 +117,15 @@ export const initPicturesLibrary = async (cache_file, thumbnails_dir, pictures_d
   // Thumbnails generation
   //
 
-  const resize_promises = [];
   for (const i of pictures_cache_array) {
     const thumbnail_path = path.join(thumbnails_dir, `${i.id}.jpg`);
 
     if (fs.existsSync(thumbnail_path)) continue;
 
-    const p = sharp(fs.readFileSync(i.file))
-      .resize(256)
-      .toFile(thumbnail_path);
-    resize_promises.push(p);
+    const image = nativeImage.createFromPath(i.file);
+    const resizedImage = image.resize({ height: 256 });
+    fs.writeFileSync(thumbnail_path, resizedImage.toJPEG(100));
   }
-
-  await Promise.all(resize_promises);
 
   pictures_cache_array.forEach((e, i, a) => {
     a[i].thumbnail = path.join(thumbnails_dir, `${e.id}.jpg`);
