@@ -258,14 +258,14 @@ class Image extends PureComponent {
           <_LeftColumn>
             {this.state.hudContent && <_Hud>{this.state.hudContent}</_Hud>}
             <Inspector
-              picture={this.state.currentPicture}
               annotationsMeasuresLinear={this.props.annotationsMeasuresLinear[this.state.currentPicture.id]}
               annotationsPointsOfInterest={this.props.annotationsPointsOfInterest[this.state.currentPicture.id]}
               annotationsRectangular={this.props.annotationsRectangular[this.state.currentPicture.id]}
-              tags={this.props.tagsByPicture[this.state.currentPicture.id]}
               deleteAnnotationMeasureLinear={this.props.deleteAnnotationMeasureLinear}
               deleteAnnotationPointOfInterest={this.props.deleteAnnotationPointOfInterest}
               deleteAnnotationRectangular={this.props.deleteAnnotationRectangular}
+              picture={this.state.currentPicture}
+              tags={this.props.tagsByPicture[this.state.currentPicture.id]}
             />
           </_LeftColumn>
           <div style={{ flex: '1 1 auto' }}>

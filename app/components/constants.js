@@ -12,6 +12,12 @@ const FG1 = '#BBB';
 const FG2 = '#DDD';
 const FG3 = '#FFF';
 
+export const RECOLNAT_CAMILLE_DEGARDIN = '#6C615F';
+
+export const DOC_BORDER = FG1;
+export const DOC_LINK_FG = BG1;
+export const DOC_LINK_BG = FG2;
+
 export const MAIN_NAV_BG = BG2;
 export const MAIN_NAV_FG = BG1;
 export const MAIN_NAV_FG_OVER = BG3;

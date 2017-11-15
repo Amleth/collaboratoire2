@@ -343,7 +343,7 @@ export default class extends Component {
 
   // RENDERING HELPERS
 
-  makeAnnotation(annotation, key, deleteCallback, editCallback) {
+  makeAnnotation(annotation, key, deleteCallback) {
     return (
       <_Annotation
         key={key}
