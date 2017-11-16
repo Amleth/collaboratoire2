@@ -201,12 +201,9 @@ export default (state = {}, action) => {
 
       return {
         ...state,
-        annotations_measures_linear: {
-          ...state.annotations_measures_linear,
-          [action.pictureId]: [
-            ...state.annotations_measures_linear[action.pictureId].filter(_ => _.id !== action.annotationId),
-            annotation
-          ]
+        [branch]: {
+          ...state[branch],
+          [action.pictureId]: [...state[branch][action.pictureId].filter(_ => _.id !== action.annotationId), annotation]
         }
       };
       break;

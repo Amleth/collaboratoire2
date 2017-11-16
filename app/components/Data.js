@@ -141,7 +141,6 @@ class Data extends PureComponent {
   gridCellRenderer({ columnIndex, key, rowIndex, style }) {
     let content = this.state.gridData[rowIndex][columnIndex];
     if (columnIndex === COLUMNS.indexOf(COLUMN_LENGTH_IN_MM)) {
-      //TODO cannot read property of undefined
       content = content.toFixed(2);
     }
 
