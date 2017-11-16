@@ -341,17 +341,25 @@ export default class extends PureComponent {
               )}
             </AutoSizer>
           </div>
-          <_Panel>
+          <_Panel
+            onDragOver={e => {
+              e.preventDefault();
+            }}
+            onDrop={e => {
+              e.preventDefault();
+              this.props.tagPicture(this.state.currentPicture.id, e.dataTransfer.getData('tagName'));
+            }}
+          >
             <img
               src={this.state.currentPicture && this.state.currentPicture.thumbnail}
               width={INSPECTOR_WIDTH - 2 * INSPECTOR_MARGIN}
             />
             <Inspector
-              picture={this.state.currentPicture}
-              tags={this.props.tagsByPicture[this.state.currentPicture.id]}
               annotationsMeasuresLinear={this.props.annotationsMeasuresLinear[this.state.currentPicture.id]}
               annotationsRectangular={this.props.annotationsRectangular[this.state.currentPicture.id]}
               annotationsPointsOfInterest={this.props.annotationsPointsOfInterest[this.state.currentPicture.id]}
+              picture={this.state.currentPicture}
+              tags={this.props.tagsByPicture[this.state.currentPicture.id]}
             />
           </_Panel>
         </_Pictures>
