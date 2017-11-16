@@ -243,7 +243,7 @@ export default (state = {}, action) => {
       return { ...state, selected_tags: [action.name, ...state.selected_tags] };
       break;
     case SET_PICTURES_SELECTION:
-      return { ...state, pictures_selection: action.pictures_selection };
+      return { ...state, pictures_selection: action.pictures_selection, current_picture_index_in_selection: 0 };
       break;
     case SET_TAGS_SELECTION_MODE:
       return { ...state, tags_selection_mode: action.mode };
