@@ -40,6 +40,12 @@ const _ExportIcon = styled.i`
   }
 `;
 
+const _Nothing = styled.div`
+  margin-top: 50px;
+  text-align: center;
+  width: 100%;
+`;
+
 const _GridCell = styled.div``;
 
 const CELL_CHARACTER_WIDTH = 7;
@@ -96,7 +102,10 @@ class Data extends PureComponent {
   }
 
   render() {
-    if (this.props.annotationsMeasuresLinear.length === 0) return null;
+    if (this.props.annotationsMeasuresLinear.length === 0)
+      return (
+        <_Nothing>Make at least 1 linear measure on a picture of the current selection to see something here.</_Nothing>
+      );
 
     let key = 0;
 
@@ -132,6 +141,7 @@ class Data extends PureComponent {
   gridCellRenderer({ columnIndex, key, rowIndex, style }) {
     let content = this.state.gridData[rowIndex][columnIndex];
     if (columnIndex === COLUMNS.indexOf(COLUMN_LENGTH_IN_MM)) {
+      //TODO cannot read property of undefined
       content = content.toFixed(2);
     }
 
@@ -166,7 +176,7 @@ class Data extends PureComponent {
     const x2_in_mm = (pixelsToMm(annotation.x2, picture.dpix) * 0.01).toFixed(2);
     const y2_in_mm = (pixelsToMm(annotation.y2, picture.dpiy) * 0.01).toFixed(2);
 
-    return `[${x1_in_mm}, ${y1_in_mm}] → [${x2_in_mm}, ${y2_in_mm}]`;
+    return `[${x1_in_mm}, ${y1_in_mm}] > [${x2_in_mm}, ${y2_in_mm}]`;
   }
 
   exportXlsx() {

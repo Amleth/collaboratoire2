@@ -1,3 +1,5 @@
+import { connect } from 'react-redux';
+
 import {
   createTag,
   selectTag,
@@ -7,7 +9,6 @@ import {
   unselectTag,
   untagPicture
 } from '../actions/app';
-import { connect } from 'react-redux';
 import Component from '../components/Library';
 import { arrayToIndex } from '../utils/js';
 

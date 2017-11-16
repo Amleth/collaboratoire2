@@ -14,7 +14,7 @@ import Inspector from '../Containers/Inspector';
 //
 
 const HEADER_HEIGHT = 35;
-const ANNOTATION_TEXT_HEIGHT = 44;
+const ANNOTATION_TEXT_HEIGHT = 55;
 
 const ANNOTATION_MEASURE_LINEAR_COLOUR = 'rgb(255,0,255)';
 const ANNOTATION_POINT_OF_INTEREST_COLOUR = 'rgb(255,0,127)';

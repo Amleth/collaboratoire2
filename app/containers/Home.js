@@ -1,8 +1,14 @@
-import React, { Component } from 'react';
-import Home from '../components/Home';
+import React from 'react';
+import { connect } from 'react-redux';
 
-export default class HomePage extends Component {
-  render() {
-    return <Home />;
-  }
-}
+import Component from '../components/Home';
+
+const mapStateToProps = state => {
+  return {};
+};
+
+const mapDispatchToProps = dispatch => {
+  return {};
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Component);

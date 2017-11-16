@@ -22,6 +22,11 @@ export const MAIN_NAV_BG = BG2;
 export const MAIN_NAV_FG = BG1;
 export const MAIN_NAV_FG_OVER = BG3;
 
+export const PROGRESS_DOWNLOADED = '#B0DB04';
+export const PROGRESS_JOB_BG = BG1;
+export const PROGRESS_JOB_FG1 = FG2;
+export const PROGRESS_JOB_FG2 = FG3;
+
 export const SECTION_BG = BG1;
 export const SECTION_BG2 = BG2;
 export const SECTION_BG2_OVER = BG3;

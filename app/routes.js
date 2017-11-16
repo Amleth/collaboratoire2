@@ -10,7 +10,8 @@ import Data from './containers/Data';
 export default () => (
   <App>
     <Switch>
-      {<Route exact path="/" component={Home} />}
+      {/* {<Route exact path="/" component={Home} />} */}
+      {<Route exact path="/" component={Library} />}
       {<Route exact path="/library" component={Library} />}
       {<Route exact path="/image" component={Image} />}
       {<Route exact path="/data" component={Data} />}

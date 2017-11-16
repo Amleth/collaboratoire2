@@ -5,24 +5,19 @@
   "description": "",
   "scripts": {
     "build": "concurrently \"npm run build-main\" \"npm run build-renderer\"",
-    "build-dll":
-      "cross-env NODE_ENV=development node --trace-warnings -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.renderer.dev.dll.js --colors",
-    "build-main":
-      "cross-env NODE_ENV=production node --trace-warnings -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.main.prod.js --colors",
-    "build-renderer":
-      "cross-env NODE_ENV=production node --trace-warnings -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.renderer.prod.js --colors",
+    "build-dll": "cross-env NODE_ENV=development node --trace-warnings -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.renderer.dev.dll.js --colors",
+    "build-main": "cross-env NODE_ENV=production node --trace-warnings -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.main.prod.js --colors",
+    "build-renderer": "cross-env NODE_ENV=production node --trace-warnings -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.renderer.prod.js --colors",
     "dev": "cross-env START_HOT=1 npm run start-renderer-dev",
     "package": "npm run build && build --publish never",
     "package-all": "npm run build && build -mwl",
     "package-linux": "npm run build && build --linux",
     "package-win": "npm run build && build --win --x64",
-    "postinstall":
-      "concurrently \"npm run build-dll\" \"electron-builder install-app-deps\" \"node node_modules/fbjs-scripts/node/check-dev-engines.js package.json\"",
+    "postinstall": "concurrently \"npm run build-dll\" \"electron-builder install-app-deps\" \"node node_modules/fbjs-scripts/node/check-dev-engines.js package.json\"",
     "prestart": "npm run build",
     "start": "cross-env NODE_ENV=production electron ./app/",
     "start-main-dev": "cross-env HOT=1 NODE_ENV=development electron -r babel-register ./app/main.dev",
-    "start-renderer-dev":
-      "cross-env NODE_ENV=development node --trace-warnings -r babel-register ./node_modules/webpack-dev-server/bin/webpack-dev-server --config webpack.config.renderer.dev.js",
+    "start-renderer-dev": "cross-env NODE_ENV=development node --trace-warnings -r babel-register ./node_modules/webpack-dev-server/bin/webpack-dev-server --config webpack.config.renderer.dev.js",
     "test": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 node --trace-warnings ./test/runTests.js",
     "test-all": "npm run build && npm run test && npm run test-e2e",
     "test-e2e": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 node --trace-warnings ./test/runTests.js e2e",
@@ -32,7 +27,14 @@
   "build": {
     "productName": "Collaboratoire2",
     "appId": "org.artisiou.Collaboratoire2",
-    "files": ["dist/", "node_modules/", "app.html", "main.prod.js", "main.prod.js.map", "package.json"],
+    "files": [
+      "dist/",
+      "node_modules/",
+      "app.html",
+      "main.prod.js",
+      "main.prod.js.map",
+      "package.json"
+    ],
     "dmg": {
       "contents": [
         {
@@ -48,10 +50,15 @@
       ]
     },
     "win": {
-      "target": ["nsis"]
+      "target": [
+        "nsis"
+      ]
     },
     "linux": {
-      "target": ["deb", "AppImage"]
+      "target": [
+        "deb",
+        "AppImage"
+      ]
     },
     "directories": {
       "buildResources": "resources",
@@ -75,16 +82,22 @@
   "homepage": "http://www.recolnat.org",
   "jest": {
     "moduleNameMapper": {
-      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$":
-        "<rootDir>/internals/mocks/fileMock.js",
+      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/internals/mocks/fileMock.js",
       "\\.(css|less|sass|scss)$": "identity-obj-proxy"
     },
-    "moduleFileExtensions": ["js"],
-    "moduleDirectories": ["node_modules", "app/node_modules"],
+    "moduleFileExtensions": [
+      "js"
+    ],
+    "moduleDirectories": [
+      "node_modules",
+      "app/node_modules"
+    ],
     "transform": {
       "^.+\\.js$": "babel-jest"
     },
-    "setupFiles": ["./internals/scripts/CheckBuiltsExist.js"]
+    "setupFiles": [
+      "./internals/scripts/CheckBuiltsExist.js"
+    ]
   },
   "devDependencies": {
     "babel-core": "^6.24.1",
@@ -151,6 +164,7 @@
     "image-size": "^0.6.1",
     "klaw-sync": "^3.0.2",
     "moment": "^2.19.1",
+    "promise-limit": "^2.5.0",
     "react": "^16.1.0",
     "react-dom": "^16.1.0",
     "react-hot-loader": "3.1.2",
@@ -162,6 +176,8 @@
     "react-virtualized": "^9.12.0",
     "redux": "^3.7.1",
     "redux-thunk": "^2.2.0",
+    "request": "^2.83.0",
+    "request-progress": "^3.0.0",
     "source-map-support": "^0.5.0",
     "styled-components": "^2.2.3",
     "xlsx": "^0.11.8"

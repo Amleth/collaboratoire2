@@ -9,7 +9,8 @@ import React from 'react';
 import { render } from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
 
-import { nextPictureInSelection, previousPictureInSelection } from './actions/app';
+import { getConfig, setConfig } from './config';
+import { importExploreJson } from './actions/app';
 import Root from './containers/Root';
 import { createInitialState } from './reducers/app';
 import { configureStore, history } from './store/configureStore';
@@ -35,10 +36,10 @@ logger.setOutput({ file: path.join(CACHE_DIR, 'log.log') });
 
 (async () => {
   // Read config file
-  const config = configYaml(path.join(remote.app.getPath('home'), 'collaboratoire2-config.yml'));
+  setConfig(configYaml(path.join(remote.app.getPath('home'), 'collaboratoire2-config.yml')));
 
   // Ensure the working directory exists
-  let picturesArray = await initPicturesLibrary(CACHE_FILE, THUMBNAILS_DIR, config['pictures_directories']);
+  let picturesArray = await initPicturesLibrary(CACHE_FILE, THUMBNAILS_DIR, getConfig()['pictures_directories']);
   if (picturesArray.length === 0) {
   }
 

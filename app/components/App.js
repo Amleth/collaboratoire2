@@ -51,9 +51,9 @@ export default class App extends Component {
       <_Root>
         <_Main>{this.props.children}</_Main>
         <_Nav>
-          <_Link to="/">
+          {/* <_Link to="/">
             <_LinkSymbol className="fa fa-home" aria-hidden="true" />
-          </_Link>
+          </_Link> */}
           <_Link to="/library">
             <_LinkSymbol className="fa fa-cubes" aria-hidden="true" />
           </_Link>
