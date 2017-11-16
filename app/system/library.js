@@ -79,6 +79,7 @@ export const initPicturesLibrary = async (cache_file, thumbnails_dir, pictures_d
       pictures_cache[sha1] = {
         files: [file.path], // an array of paths, because maybe other files will have the same SHA1, and thus the same metadata
         file: file.path, // For now, we alse store the first encountered file for the current SHA1
+        file_basename: path.basename(file.path),
         id: chance.guid(),
         width,
         height,

@@ -293,7 +293,7 @@ export default class extends PureComponent {
                   width={width}
                 >
                   <Column
-                    dataKey="file"
+                    dataKey="file_basename"
                     label="File"
                     width={0.6 * width}
                     cellRenderer={({ cellData, rowData }) => {
@@ -303,7 +303,7 @@ export default class extends PureComponent {
                           <_FileIcon
                             className="fa fa-folder-open"
                             aria-hidden="true"
-                            onClick={e => shell.showItemInFolder(cellData)}
+                            onClick={e => shell.showItemInFolder(rowData.file)}
                           />
                           &nbsp;
                           <_FileName
@@ -318,7 +318,7 @@ export default class extends PureComponent {
                             }}
                             onMouseOver={e => this.setState({ currentPicture: rowData })}
                           >
-                            {path.basename(cellData)}
+                            {rowData.file_basename}
                           </_FileName>
                         </span>
                       );
@@ -402,7 +402,7 @@ export default class extends PureComponent {
   }
 
   _sortList({ sortBy, sortDirection }) {
-    const sorted = lodash.sortBy(this.props.allPictures, [sortBy]);
+    const sorted = lodash.sortBy(this.props.allPictures, _ => _[sortBy].toLowerCase());
 
     return sortDirection === SortDirection.DESC ? lodash.reverse(sorted) : sorted;
   }
