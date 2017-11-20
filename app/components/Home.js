@@ -55,14 +55,10 @@ const _Title = styled.div`
     letter-spacing: 0.3em;
   }
 `;
-const _Help = styled.div`
-  font-size: 150%;
+const _Message = styled.div`
+  color: ${RECOLNAT_CAMILLE_DEGARDIN};
   margin-top: 50px;
   text-align: center;
-
-  span {
-    padding: 11px;
-  }
 `;
 
 const _ImportFromExplore = styled.div`
@@ -344,16 +340,9 @@ export default class extends Component {
             </div>
             <h1>the collaboratory</h1>
           </_Title>
-          <_Help>
-            <_FileOpenLink
-              onClick={e => {
-                const HELP_FILE_PATH = 'file://' + path.join(__dirname, '../docs/Collaboratoire 2 - Aide.pdf');
-                shell.openExternal(HELP_FILE_PATH);
-              }}
-            >
-              Consult the french help file <i className="fa fa-book" aria-hidden="true" />
-            </_FileOpenLink>
-          </_Help>
+          <_Message>
+              Version 0.1.0 (2017.11.20)
+          </_Message>
           {/* <_ImportFromExplore>
             <h2>
               Import pictures & metadata from{' '}

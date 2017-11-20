@@ -158,7 +158,7 @@ export default merge.smart(baseConfig, {
     /**
      * Babli is an ES6+ aware minifier based on the Babel toolchain (beta)
      */
-    //new MinifyPlugin(),
+    // new MinifyPlugin(),
 
     new ExtractTextPlugin('style.css'),
 

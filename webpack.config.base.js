@@ -20,6 +20,10 @@ export default {
             cacheDirectory: true
           }
         }
+      },
+      {
+        test: /\.pdf$/,
+        loader: 'file-loader'
       }
     ]
   },

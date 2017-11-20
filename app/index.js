@@ -8,6 +8,7 @@ import path from 'path';
 import React from 'react';
 import { render } from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
+import { push } from 'react-router-redux';
 
 import { getConfig, setConfig } from './config';
 import { importExploreJson } from './actions/app';
@@ -109,6 +110,10 @@ logger.setOutput({ file: path.join(CACHE_DIR, 'log.log') });
   // }
 
   console.log(`${new Date().getTime() - start}ms`);
+
+  setTimeout(function() {
+    store.dispatch(push('/'));
+  }, 500);
 
   render(
     <AppContainer>
