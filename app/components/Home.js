@@ -55,6 +55,15 @@ const _Title = styled.div`
     letter-spacing: 0.3em;
   }
 `;
+const _Help = styled.div`
+  font-size: 150%;
+  margin-top: 50px;
+  text-align: center;
+
+  span {
+    padding: 11px;
+  }
+`;
 
 const _ImportFromExplore = styled.div`
   display: flex;
@@ -335,7 +344,17 @@ export default class extends Component {
             </div>
             <h1>the collaboratory</h1>
           </_Title>
-          <_ImportFromExplore>
+          <_Help>
+            <_FileOpenLink
+              onClick={e => {
+                const HELP_FILE_PATH = 'file://' + path.join(__dirname, '../docs/Collaboratoire 2 - Aide.pdf');
+                shell.openExternal(HELP_FILE_PATH);
+              }}
+            >
+              Consult the french help file <i className="fa fa-book" aria-hidden="true" />
+            </_FileOpenLink>
+          </_Help>
+          {/* <_ImportFromExplore>
             <h2>
               Import pictures & metadata from{' '}
               <a onClick={e => shell.openExternal('https://explore.recolnat.org/')}>explore.recolnat.org</a>
@@ -355,7 +374,7 @@ export default class extends Component {
                 open the <code>.json</code> file <i className="fa fa-folder-open-o" aria-hidden="true" />
               </_FileOpenLink>
             </h3>
-          </_ImportFromExplore>
+          </_ImportFromExplore> */}
         </_Root>
       );
   }
