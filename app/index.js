@@ -34,10 +34,15 @@ const _LoadingMessage = styled.div`
   width: 100%;
 
   ul {
+    font-size: 69%;
     list-style-type: none;
+    margin: 0;
+    padding: 0;
 
     li {
       font-family: monospace;
+      margin: 0;
+      padding: 0;
     }
   }
 `;
