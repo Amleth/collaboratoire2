@@ -9,7 +9,9 @@ import React from 'react';
 import { render } from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
 import { push } from 'react-router-redux';
+import styled, { css } from 'styled-components';
 
+import { RECOLNAT_CAMILLE_DEGARDIN } from './components/constants';
 import { getConfig, setConfig } from './config';
 import { importExploreJson } from './actions/app';
 import Root from './containers/Root';
@@ -22,6 +24,36 @@ import 'react-virtualized/styles.css';
 
 const chance = new Chance();
 const start = new Date().getTime();
+
+const _LoadingMessage = styled.div`
+  color: white;
+  font-size: 200%;
+  height: 100%;
+  margin-top: 111px;
+  text-align: center;
+  width: 100%;
+
+  ul {
+    list-style-type: none;
+
+    li {
+      font-family: monospace;
+    }
+  }
+`;
+
+const _WaitIcon = styled.i`
+  @keyframes hop {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  animation: hop 1s ease infinite alternate;
+`;
 
 // Create application cache & user data directories
 const CACHE_DIR = path.join(remote.app.getPath('home'), 'collaboratoire2-cache');
@@ -39,6 +71,17 @@ logger.setOutput({ file: path.join(CACHE_DIR, 'log.log') });
   // Read config file
   setConfig(configYaml(path.join(remote.app.getPath('home'), 'collaboratoire2-config.yml')));
 
+  // Display a waiting message
+  render(
+    <_LoadingMessage>
+      <p>Loading pictures from:</p>
+      <ul>{getConfig()['pictures_directories'].map(_ => <li key={_}>{_}</li>)}</ul>
+      <p>Please wait...</p>
+      <_WaitIcon className="fa fa-tree" aria-hidden="true" />
+    </_LoadingMessage>,
+    document.getElementById('root')
+  );
+
   // Ensure the working directory exists
   let picturesArray = await initPicturesLibrary(CACHE_FILE, THUMBNAILS_DIR, getConfig()['pictures_directories']);
   if (picturesArray.length === 0) {
@@ -54,60 +97,6 @@ logger.setOutput({ file: path.join(CACHE_DIR, 'log.log') });
   initialState.app.pictures = picturesObject;
   initialState.app.pictures_selection = Object.keys(picturesObject);
   const store = configureStore(initialState);
-
-  // Create some test data
-  // const { createTag } = require('./actions/app');
-  // for (let i = 0; i < 100; i++) {
-  //   store.dispatch(createTag(chance.word()));
-  // }
-  // const { tagPicture } = require('./actions/app');
-  // for (let picture of Object.values(store.getState().app.pictures)) {
-  //   for (let j = 0; j < chance.d100(); j++) {
-  //     const tag = chance.pickone(store.getState().app.tags.map(_ => _.name));
-  //     store.dispatch(tagPicture(picture.id, tag));
-  //   }
-  // }
-  // const { createAnnotationMeasureLinear } = require('./actions/app');
-  // for (let picture of Object.values(store.getState().app.pictures)) {
-  //   for (let j = 0; j < 20; j++) {
-  //     store.dispatch(
-  //       createAnnotationMeasureLinear(
-  //         picture.id,
-  //         chance.integer({ min: 0, max: picture.width }),
-  //         chance.integer({ min: 0, max: picture.height }),
-  //         chance.integer({ min: 0, max: picture.width }),
-  //         chance.integer({ min: 0, max: picture.height }),
-  //         Math.random() * 300
-  //       )
-  //     );
-  //   }
-  // }
-  // const { createAnnotationPointOfInterest } = require('./actions/app');
-  // for (let picture of Object.values(store.getState().app.pictures)) {
-  //   for (let j = 0; j < 10; j++) {
-  //     store.dispatch(
-  //       createAnnotationPointOfInterest(
-  //         picture.id,
-  //         chance.integer({ min: 0, max: picture.width }),
-  //         chance.integer({ min: 0, max: picture.height })
-  //       )
-  //     );
-  //   }
-  // }
-  // const { createAnnotationRectangular } = require('./actions/app');
-  // for (let picture of Object.values(store.getState().app.pictures)) {
-  //   for (let j = 0; j < 5; j++) {
-  //     store.dispatch(
-  //       createAnnotationRectangular(
-  //         picture.id,
-  //         chance.integer({ min: 0, max: picture.width }),
-  //         chance.integer({ min: 0, max: picture.height }),
-  //         chance.integer({ min: 0, max: picture.width / 5 }),
-  //         chance.integer({ min: 0, max: picture.height / 5 })
-  //       )
-  //     );
-  //   }
-  // }
 
   console.log(`${new Date().getTime() - start}ms`);
 

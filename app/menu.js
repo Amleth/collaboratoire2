@@ -109,14 +109,16 @@ export default class MenuBuilder {
 
     return [
       subMenuAbout,
-      subMenuEdit,
-      subMenuView,
-      subMenuWindow,
-      subMenuHelp
+      // subMenuEdit,
+      // subMenuView,
+      // subMenuWindow,
+      // subMenuHelp
     ];
   }
 
   buildDefaultTemplate() {
+    return [];
+    
     const templateDefault = [{
       label: '&File',
       submenu: [{

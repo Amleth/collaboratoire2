@@ -76,4 +76,6 @@ app.on('ready', async () => {
 
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();
+
+  mainWindow.setMenu(null);
 });
