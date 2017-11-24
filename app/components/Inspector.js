@@ -74,7 +74,16 @@ const _Tab = styled.div`
       }
     `};
 `;
-const _MetadataSubpanel = styled.div`width: 100%;`;
+const _MetadataSubpanel = styled.div`
+  width: 100%;
+`;
+const _PictureFileBasename = styled.div`
+  color: ${INSPECTOR_TEXT};
+  padding: ${MARGIN}px;
+  text-align: center;
+  width: 100%;
+  word-break:break-all;
+`;
 const _TagsTitle = styled.div`
   color: ${INSPECTOR_TEXT};
   font-size: 150%;
@@ -110,7 +119,9 @@ const _Tag = styled.div`
     `};
 `;
 
-const _AnnotationsSubPanel = styled.div`width: 100%;`;
+const _AnnotationsSubPanel = styled.div`
+  width: 100%;
+`;
 const _AnnotationsTypeTabs = styled.div`
   display: flex;
   margin-top: ${MARGIN}px;
@@ -132,7 +143,11 @@ const _AnnotationsTypeTab = styled.div`
     background-color: 1px solid ${INSPECTOR_TAB_BG_OVER};
   }
 
-  ${props => props.selected && css`background-color: ${INSPECTOR_TAB_BG};`};
+  ${props =>
+    props.selected &&
+    css`
+      background-color: ${INSPECTOR_TAB_BG};
+    `};
 `;
 const _AnnotationsList = styled.ul`
   list-style: none;
@@ -151,12 +166,16 @@ const _Annotation = styled.li`
     transition: background-color 1ms ease;
   }
 `;
-const _AnnotationProperty = styled.div`color: ${INSPECTOR_ANNOTATION_TEXT1};`;
+const _AnnotationProperty = styled.div`
+  color: ${INSPECTOR_ANNOTATION_TEXT1};
+`;
 const _AnnotationDate = styled.div`
   color: ${INSPECTOR_ANNOTATION_TEXT2};
   text-align: right;
 `;
-const _Annotations = styled.div`margin-top: ${MARGIN}px;`;
+const _Annotations = styled.div`
+  margin-top: ${MARGIN}px;
+`;
 const _AnnotationsListStats = styled.div`
   border-bottom: 1px solid ${INSPECTOR_BORDER1};
   border-top: 1px solid ${INSPECTOR_TAB_BG};
@@ -252,6 +271,7 @@ export default class extends Component {
         </_Tabs>
         {this.state.selectedTab === TAB_METADATA && (
           <_MetadataSubpanel>
+            <_PictureFileBasename>{this.props.picture.file_basename}</_PictureFileBasename>
             <_TagsTitle>TAGS</_TagsTitle>
             <_Tags>
               {this.props.tags && this.props.tags.map(_ => <_Tag key={this.props.picture.id + ':' + _}>{_}</_Tag>)}
@@ -283,9 +303,9 @@ export default class extends Component {
             {ANNOTATION_MEASURE_LINEAR === this.state.selectedAnnotationType && (
               <_Annotations>
                 <_AnnotationsListStats>
-                  <div>{`${this.props.annotationsMeasuresLinear
-                    ? this.props.annotationsMeasuresLinear.length
-                    : 0} annotations`}</div>
+                  <div>{`${
+                    this.props.annotationsMeasuresLinear ? this.props.annotationsMeasuresLinear.length : 0
+                  } annotations`}</div>
                   {this.props.annotationsMeasuresLinear && this.props.annotationsMeasuresLinear.length !== 0 ? (
                     <div>{`M=${this.state.annotationsMeasuresLinearAverage.toFixed(2)}mm`}</div>
                   ) : (
@@ -308,9 +328,9 @@ export default class extends Component {
             {ANNOTATION_RECTANGULAR === this.state.selectedAnnotationType && (
               <_Annotations>
                 <_AnnotationsListStats>
-                  <div>{`${this.props.annotationsRectangular
-                    ? this.props.annotationsRectangular.length
-                    : 0} annotations`}</div>
+                  <div>{`${
+                    this.props.annotationsRectangular ? this.props.annotationsRectangular.length : 0
+                  } annotations`}</div>
                 </_AnnotationsListStats>
                 <_AnnotationsList>
                   {this.props.annotationsRectangular &&
@@ -323,9 +343,9 @@ export default class extends Component {
             {ANNOTATION_POINT_OF_INTEREST === this.state.selectedAnnotationType && (
               <_Annotations>
                 <_AnnotationsListStats>
-                  <div>{`${this.props.annotationsPointsOfInterest
-                    ? this.props.annotationsPointsOfInterest.length
-                    : 0} annotations`}</div>
+                  <div>{`${
+                    this.props.annotationsPointsOfInterest ? this.props.annotationsPointsOfInterest.length : 0
+                  } annotations`}</div>
                 </_AnnotationsListStats>
                 <_AnnotationsList>
                   {this.props.annotationsPointsOfInterest &&
