@@ -126,7 +126,10 @@ export const initPicturesLibrary = async (cache_file, thumbnails_dir, pictures_d
     const thumbnail_path = path.join(thumbnails_dir, `${i.id}.jpg`);
 
     const exists = await fs.pathExists(thumbnail_path);
-    if (exists) continue;
+    if (exists) {
+      ee.emit(EVENT_THUMBNAIL_CREATION_COMPLETE, thumbnail_path);
+      continue;
+    }
 
     const image = nativeImage.createFromPath(i.file);
     const resizedImage = image.resize({
