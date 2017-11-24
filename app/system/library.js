@@ -2,36 +2,31 @@ import 'babel-polyfill';
 import Chance from 'chance';
 import crypto from 'crypto';
 import electron, { nativeImage, remote } from 'electron';
+import { EventEmitter } from 'events';
 import exif from 'fast-exif';
 import fs from 'fs-extra';
 import ImageFile from 'image-file';
 import imagesize from 'image-size';
 import klawSync from 'klaw-sync';
+import klaw from 'klaw';
 import path from 'path';
 
 var chance = new Chance();
-const sizeOf = _ => {
-  return new Promise((fulfill, reject) => {
-    imagesize(_, (error, dimensions) => {
-      if (error) reject(error);
-      else fulfill(dimensions);
-    });
-  });
-};
 export const authorized_pictures_extensions = ['.jpg', '.jpeg', '.png'];
-export const readExif = async file => exif.read(file);
+export const ee = new EventEmitter();
+export const EVENT_DIRECTORY_ANALYSIS_COMPLETE = 'EVENT_DIRECTORY_ANALYSIS_COMPLETE';
+export const EVENT_COMPLETE = 'COMPLETE';
+export const EVENT_DIRECTORIES_ANALYSES_COMPLETE = 'EVENT_DIRECTORIES_ANALYSES_COMPLETE';
+export const EVENT_PICTURE_METADATA_ERROR = 'EVENT_PICTURE_ANALYSIS_ERROR';
+export const EVENT_PICTURE_METADATA_COMPLETE = 'EVENT_PICTURE_METADATA_COMPLETE';
+export const EVENT_CACHE_BUILDING_COMPLETE = 'EVENT_CACHE_BUILDING_COMPLETE';
+export const EVENT_THUMBNAIL_CREATION_COMPLETE = 'EVENT_THUMBNAIL_CREATION_COMPLETE';
+export const EVENT_THUMBNAILS_CREATION_COMPLETE = 'EVENT_THUMBNAILS_CREATION_COMPLETE';
 
 //
 // LIBRARY
 //
 
-/*
-// TODO
-On collecte toutes les images du disque.
-Pour chacune d'entre elles, on regarde si elle est dans le cache ou pas.
-Si oui, on ne fait rien.
-Si non, on construit son entrée dans le cache (metadonnées + miniature).
-*/
 export const initPicturesLibrary = async (cache_file, thumbnails_dir, pictures_directories) => {
   //
   // Pictures cache initialization
@@ -52,7 +47,7 @@ export const initPicturesLibrary = async (cache_file, thumbnails_dir, pictures_d
   }
 
   //
-  // File metadata collector helper
+  // Helper: file metadata collector
   //
 
   const makePictureObjectFromFile = async file => {
@@ -88,7 +83,8 @@ export const initPicturesLibrary = async (cache_file, thumbnails_dir, pictures_d
         dpiy
       };
     } else {
-      pictures_cache[sha1].files.push(file.path);
+      if (pictures_cache[sha1] && pictures_cache[sha1].files && pictures_cache[sha1].files.indexOf(file.path) < 0)
+        pictures_cache[sha1].files.push(file.path);
     }
 
     // This is a used file SHA1
@@ -99,9 +95,14 @@ export const initPicturesLibrary = async (cache_file, thumbnails_dir, pictures_d
   // User pictures files examination
   //
 
-  const files = collectPictureFilesInDirectories(pictures_directories);
+  const files = await collectPictureFilesInDirectories(pictures_directories);
   for (const f of files) {
-    await makePictureObjectFromFile(f, pictures_cache);
+    try {
+      await makePictureObjectFromFile(f, pictures_cache);
+      ee.emit(EVENT_PICTURE_METADATA_COMPLETE);
+    } catch (e) {
+      ee.emit(EVENT_PICTURE_METADATA_ERROR, f.path, e);
+    }
   }
 
   //
@@ -113,43 +114,88 @@ export const initPicturesLibrary = async (cache_file, thumbnails_dir, pictures_d
   }
   fs.writeFileSync(cache_file, JSON.stringify(pictures_cache));
   const pictures_cache_array = Object.values(pictures_cache);
+  ee.emit(EVENT_CACHE_BUILDING_COMPLETE, pictures_cache_array);
 
   //
   // Thumbnails generation
   //
 
+  await sleep(666);
+
   for (const i of pictures_cache_array) {
     const thumbnail_path = path.join(thumbnails_dir, `${i.id}.jpg`);
 
-    if (fs.existsSync(thumbnail_path)) continue;
+    const exists = await fs.pathExists(thumbnail_path);
+    if (exists) continue;
 
     const image = nativeImage.createFromPath(i.file);
-    const resizedImage = image.resize({ height: 256 });
+    const resizedImage = image.resize({
+      height: 256
+    });
     fs.writeFileSync(thumbnail_path, resizedImage.toJPEG(100));
+    ee.emit(EVENT_THUMBNAIL_CREATION_COMPLETE, thumbnail_path);
   }
 
   pictures_cache_array.forEach((e, i, a) => {
     a[i].thumbnail = path.join(thumbnails_dir, `${e.id}.jpg`);
   });
 
+  ee.emit(EVENT_THUMBNAILS_CREATION_COMPLETE);
+
   //
   // New cache
   //
 
-  return pictures_cache_array;
+  setTimeout(() => {
+    ee.emit(EVENT_COMPLETE, pictures_cache_array);
+  }, 1111);
+};
+
+//
+// HELPERS
+//
+
+export const readExif = async file => exif.read(file);
+
+const sizeOf = _ => {
+  return new Promise((fulfill, reject) => {
+    imagesize(_, (error, dimensions) => {
+      if (error) reject(error);
+      else fulfill(dimensions);
+    });
+  });
 };
 
 const collectPictureFilesInDirectories = directories => {
-  let files = [];
-  const filterFn = item => authorized_pictures_extensions.includes(path.extname(item.path).toLowerCase());
-  directories.map(d => (files = [...files, ...klawSync(d, { filter: filterFn })]));
+  return new Promise((resolve, reject) => {
+    let files = [];
 
-  return files;
+    const start = new Date().getTime();
+    directories.map(d => {
+      klaw(d, {
+        filter: _ =>
+          !(fs.statSync(_).isDirectory() && ['.dropbox.cache', 'node_modules', '.git'].includes(path.basename(_)))
+      })
+        .on('data', _ => {
+          let event;
+          const stats = fs.statSync(_.path);
+          if (stats.isDirectory()) {
+          } else {
+            if (authorized_pictures_extensions.includes(path.extname(_.path).toLowerCase())) {
+              files.push(_);
+            }
+          }
+          if (event) {
+          }
+        })
+        .on('end', () => {
+          console.log(`${new Date().getTime() - start}ms`);
+          ee.emit(EVENT_DIRECTORIES_ANALYSES_COMPLETE, files.length);
+          resolve(files);
+        });
+    });
+  });
 };
-
-//
-// PICTURE
-//
 
 const getSHA1 = file =>
   new Promise((resolve, reject) => {
@@ -172,4 +218,10 @@ const getJPEGPPI = file => {
   const image = new ImageFile(new Uint8Array(fs.readFileSync(file)).buffer);
 
   return image.ppi;
+};
+
+const timeout = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+const sleep = async ms => {
+  await timeout(ms);
 };

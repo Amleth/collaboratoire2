@@ -9,15 +9,16 @@ import React from 'react';
 import { render } from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
 import { push } from 'react-router-redux';
-import styled, { css } from 'styled-components';
+import rimraf from 'rimraf';
 
 import { RECOLNAT_CAMILLE_DEGARDIN } from './components/constants';
+import Loading from './components/Loading';
 import { getConfig, setConfig } from './config';
 import { importExploreJson } from './actions/app';
 import Root from './containers/Root';
 import { createInitialState } from './reducers/app';
 import { configureStore, history } from './store/configureStore';
-import { initPicturesLibrary } from './system/library';
+import { ee, EVENT_COMPUTING_PICTURE, EVENT_COMPLETE, initPicturesLibrary } from './system/library';
 
 import './app.global.css';
 import 'react-virtualized/styles.css';
@@ -25,43 +26,9 @@ import 'react-virtualized/styles.css';
 const chance = new Chance();
 const start = new Date().getTime();
 
-const _LoadingMessage = styled.div`
-  color: white;
-  font-size: 200%;
-  height: 100%;
-  margin-top: 111px;
-  text-align: center;
-  width: 100%;
-
-  ul {
-    font-size: 69%;
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-
-    li {
-      font-family: monospace;
-      margin: 0;
-      padding: 0;
-    }
-  }
-`;
-
-const _WaitIcon = styled.i`
-  @keyframes hop {
-    0% {
-      opacity: 0;
-    }
-    100% {
-      opacity: 1;
-    }
-  }
-
-  animation: hop 1s ease infinite alternate;
-`;
-
 // Create application cache & user data directories
 const CACHE_DIR = path.join(remote.app.getPath('home'), 'collaboratoire2-cache');
+// rimraf.sync(CACHE_DIR);
 const THUMBNAILS_DIR = path.join(CACHE_DIR, 'thumbnails');
 export const USER_DATA_DIR = path.join(remote.app.getPath('home'), 'collaboratoire2-userdata');
 const CACHE_FILE = path.join(CACHE_DIR, 'cache.json');
@@ -72,26 +39,14 @@ fs.ensureDirSync(THUMBNAILS_DIR);
 // Logger configuration
 logger.setOutput({ file: path.join(CACHE_DIR, 'log.log') });
 
-(async () => {
-  // Read config file
-  setConfig(configYaml(path.join(remote.app.getPath('home'), 'collaboratoire2-config.yml')));
+// Read config file
+setConfig(configYaml(path.join(remote.app.getPath('home'), 'collaboratoire2-config.yml')));
+const PICTURE_DIRECTORIES = getConfig()['pictures_directories'];
 
-  // Display a waiting message
-  render(
-    <_LoadingMessage>
-      <p>Loading pictures from:</p>
-      <ul>{getConfig()['pictures_directories'].map(_ => <li key={_}>{_}</li>)}</ul>
-      <p>Please wait...</p>
-      <_WaitIcon className="fa fa-tree" aria-hidden="true" />
-    </_LoadingMessage>,
-    document.getElementById('root')
-  );
-
-  // Ensure the working directory exists
-  let picturesArray = await initPicturesLibrary(CACHE_FILE, THUMBNAILS_DIR, getConfig()['pictures_directories']);
-  if (picturesArray.length === 0) {
-  }
-
+// Wait for library init
+render(<Loading directories={PICTURE_DIRECTORIES} loadingEventEmitter={ee} />, document.getElementById('root'));
+initPicturesLibrary(CACHE_FILE, THUMBNAILS_DIR, PICTURE_DIRECTORIES);
+ee.on(EVENT_COMPLETE, picturesArray => {
   const picturesObject = {};
   for (const p of picturesArray) {
     picturesObject[p.id] = p;
@@ -127,4 +82,4 @@ logger.setOutput({ file: path.join(CACHE_DIR, 'log.log') });
       );
     });
   }
-})();
+});
