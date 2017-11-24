@@ -1,7 +1,8 @@
 export const pixelsToMm = (d, dpi) => 25.4 * d / dpi;
 
-export const getCartesianDistanceInMm = (x1, y1, x2, y2, dpix, dpiy) =>
-  Math.sqrt(Math.pow(25.4 * (x2 - x1) / dpix, 2) + Math.pow(25.4 * (y2 - y1) / dpiy, 2));
+export const getCartesianDistanceInMm = (x1, y1, x2, y2, dpix, dpiy) => {
+  return Math.sqrt(Math.pow(25.4 * (x2 - x1) / dpix, 2) + Math.pow(25.4 * (y2 - y1) / dpiy, 2));
+};
 
 export const standardDeviation = values => {
   if (!values) return 0;

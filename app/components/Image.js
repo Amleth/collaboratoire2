@@ -44,7 +44,9 @@ const _Header = styled.div`
   width: 100%;
 `;
 
-const _PicturesBrowsingWrapper = styled.div`display: flex;`;
+const _PicturesBrowsingWrapper = styled.div`
+  display: flex;
+`;
 
 const _ImageBrowsingButton = styled.span`
   background-color: ${SECTION_BG2};
@@ -58,9 +60,13 @@ const _ImageBrowsingButton = styled.span`
   }
 `;
 
-const _CurrentPicture = styled.span`margin: 0 10px;`;
+const _CurrentPicture = styled.span`
+  margin: 0 10px;
+`;
 
-const _SelectedAnnotationTool = styled.span`color: ${SELECTED};`;
+const _SelectedAnnotationTool = styled.span`
+  color: ${SELECTED};
+`;
 
 const _AnnotationButtons = styled.div`
   display: flex;
@@ -83,10 +89,16 @@ const _AnnotationToolButton = styled.div`
     transition: background-color 250ms ease;
   }
 
-  ${props => props.selected && css`background-color: ${SELECTED};`};
+  ${props =>
+    props.selected &&
+    css`
+      background-color: ${SELECTED};
+    `};
 `;
 
-const _LeftColumn = styled.div`width: ${NAV_SIZE};`;
+const _LeftColumn = styled.div`
+  width: ${NAV_SIZE};
+`;
 
 const _Hud = styled.div`
   color: black;
@@ -221,8 +233,9 @@ class Image extends PureComponent {
               <i className="fa fa-caret-left fa" aria-hidden="true" />
             </_ImageBrowsingButton>
             <_CurrentPicture>
-              {`Picture n° ${this.props.currentPictureIndexInSelection + 1}/${this.props.picturesSelection
-                .length} in current selection`}
+              {`Picture n° ${this.props.currentPictureIndexInSelection + 1}/${
+                this.props.picturesSelection.length
+              } in current selection`}
             </_CurrentPicture>
             <_ImageBrowsingButton onClick={e => this.props.nextPictureInSelection()}>
               <i className="fa fa-caret-right fa" aria-hidden="true" />
@@ -435,9 +448,12 @@ class Image extends PureComponent {
             y,
             this.state.currentPicture.dpix,
             this.state.currentPicture.dpiy
-          ).toFixed(2);
+          );
           this.setState({
-            hudContent: `${mm}mm @(${this.state.currentPicture.dpix},${this.state.currentPicture.dpiy})DPI`
+            hudContent:
+              !isNaN(mm) && mm !== Infinity
+                ? `${mm.toFixed(2)}mm @(${this.state.currentPicture.dpix},${this.state.currentPicture.dpiy})DPI`
+                : null
           });
         }
         break;
@@ -491,7 +507,7 @@ class Image extends PureComponent {
     const x1 = annotationMeasureLinearFirstClickedPoint.x;
     const y1 = annotationMeasureLinearFirstClickedPoint.y;
     annotationMeasureLinearFirstClickedPoint = null;
-    const mm = getCartesianDistanceInMm(
+    let mm = getCartesianDistanceInMm(
       x1,
       y1,
       secondClickedPointX,
@@ -499,6 +515,7 @@ class Image extends PureComponent {
       this.state.currentPicture.dpix,
       this.state.currentPicture.dpiy
     );
+    mm = isNaN(mm) || Infinity === mm ? null : mm;
     this.props.createAnnotationMeasureLinear(
       this.state.currentPicture.id,
       x1,

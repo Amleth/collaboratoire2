@@ -48,7 +48,7 @@ const _Nothing = styled.div`
 
 const _GridCell = styled.div``;
 
-const CELL_CHARACTER_WIDTH = 7;
+const CELL_CHARACTER_WIDTH = 9;
 
 //
 // COMPONENT
@@ -128,6 +128,7 @@ class Data extends PureComponent {
               height={height}
               rowCount={this.state.annotationsMeasuresLinear.length}
               rowHeight={25}
+              style={{ fontFamily: 'monospace' }}
               width={width}
             />
           )}
@@ -140,9 +141,6 @@ class Data extends PureComponent {
 
   gridCellRenderer({ columnIndex, key, rowIndex, style }) {
     let content = this.state.gridData[rowIndex][columnIndex];
-    if (columnIndex === COLUMNS.indexOf(COLUMN_LENGTH_IN_MM)) {
-      content = content.toFixed(2);
-    }
 
     return (
       <_GridCell key={key} style={style}>
@@ -160,7 +158,7 @@ class Data extends PureComponent {
         path.basename(picture.file),
         annotation.targetType,
         annotation.title,
-        annotation.value_in_mm,
+        this.formatValueInMm(annotation.value_in_mm),
         this.formatPosition_AnnotationMeasureLinear(annotation, picture),
         picture.file
       ];
@@ -169,13 +167,21 @@ class Data extends PureComponent {
 
   // BUSINESS LOGIC
 
-  formatPosition_AnnotationMeasureLinear(annotation, picture) {
-    const x1_in_mm = (pixelsToMm(annotation.x1, picture.dpix) * 0.01).toFixed(2);
-    const y1_in_mm = (pixelsToMm(annotation.y1, picture.dpiy) * 0.01).toFixed(2);
-    const x2_in_mm = (pixelsToMm(annotation.x2, picture.dpix) * 0.01).toFixed(2);
-    const y2_in_mm = (pixelsToMm(annotation.y2, picture.dpiy) * 0.01).toFixed(2);
+  formatValueInMm(_) {
+    return typeof _ === 'number' ? _.toFixed(2) : null;
+  }
 
-    return `[${x1_in_mm}, ${y1_in_mm}] > [${x2_in_mm}, ${y2_in_mm}]`;
+  formatPosition_AnnotationMeasureLinear(annotation, picture) {
+    const x1_in_mm = pixelsToMm(annotation.x1, picture.dpix) * 0.01;
+    const y1_in_mm = pixelsToMm(annotation.y1, picture.dpiy) * 0.01;
+    const x2_in_mm = pixelsToMm(annotation.x2, picture.dpix) * 0.01;
+    const y2_in_mm = pixelsToMm(annotation.y2, picture.dpiy) * 0.01;
+
+    const coordinates = [x1_in_mm, y1_in_mm, x2_in_mm, y2_in_mm];
+    if (coordinates.map(_ => Infinity === _).indexOf(true) >= 0) return null;
+    if (coordinates.map(isNaN).indexOf(true) >= 0) return null;
+
+    return `[${x1_in_mm.toFixed(2)}, ${y1_in_mm.toFixed(2)}] > [${x2_in_mm.toFixed(2)}, ${y2_in_mm.toFixed(2)}]`;
   }
 
   exportXlsx() {
