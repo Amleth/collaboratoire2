@@ -49,7 +49,9 @@ const _Root = styled.div`
   width: 100%;
 `;
 
-const _Header = styled.div`width: 100%;`;
+const _Header = styled.div`
+  width: 100%;
+`;
 
 // TAGS
 
@@ -335,7 +337,8 @@ export default class extends PureComponent {
                     width={0.1 * width}
                     key={key++}
                     cellRenderer={({ cellData }) =>
-                      this.props.tagsByPicture.hasOwnProperty(cellData) ? this.props.tagsByPicture[cellData].length : 0}
+                      this.props.tagsByPicture.hasOwnProperty(cellData) ? this.props.tagsByPicture[cellData].length : 0
+                    }
                   />
                 </Table>
               )}
@@ -405,12 +408,14 @@ export default class extends PureComponent {
 
   _sort({ sortBy, sortDirection }) {
     const sortedPicturesList = this._sortList({ sortBy, sortDirection });
-
     this.setState({ sortBy, sortDirection, sortedPicturesList });
   }
 
   _sortList({ sortBy, sortDirection }) {
-    const sorted = lodash.sortBy(this.props.allPictures, _ => _[sortBy].toLowerCase());
+    const sorted = lodash.sortBy(
+      this.props.allPictures,
+      _ => (typeof _[sortBy] === 'string' ? _[sortBy].toLowerCase() : _[sortBy])
+    );
 
     return sortDirection === SortDirection.DESC ? lodash.reverse(sorted) : sorted;
   }
