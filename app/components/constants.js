@@ -51,6 +51,7 @@ export const INSPECTOR_BORDER1 = BG2;
 export const INSPECTOR_BORDER2 = BG2;
 export const INSPECTOR_BUTTON_BG = FG1;
 export const INSPECTOR_INPUT_BG = FG2;
+export const INSPECTOR_METADATA_TITLE = BG1;
 export const INSPECTOR_TAB_BG = BG2;
 export const INSPECTOR_TAB_BG_SELECTED = BG3;
 export const INSPECTOR_TAB_BG_OVER = BG3;

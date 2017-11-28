@@ -204,9 +204,8 @@ class Image extends PureComponent {
 
     this.click_reactsvgpanzoom = this.click_reactsvgpanzoom.bind(this);
     this.mouseMove_reactsvgpanzoom = this.mouseMove_reactsvgpanzoom.bind(this);
-    this.click_annotation = this.click_annotation.bind(this);
 
-    this.mouseMove_reactsvgpanzoom = this.mouseMove_reactsvgpanzoom.bind(this);
+    this.click_annotation = this.click_annotation.bind(this);
     this.completeAnnotationMeasureLinear = this.completeAnnotationMeasureLinear.bind(this);
     this.makeAnnotationPointOfInterest = this.makeAnnotationPointOfInterest.bind(this);
     this.completeAnnotationRectangular = this.completeAnnotationRectangular.bind(this);

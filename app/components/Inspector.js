@@ -11,6 +11,7 @@ import {
   INSPECTOR_BG,
   INSPECTOR_BORDER1,
   INSPECTOR_BORDER2,
+  INSPECTOR_METADATA_TITLE,
   INSPECTOR_TAB_BG,
   INSPECTOR_TAB_BG_SELECTED,
   INSPECTOR_TAB_BG_OVER,
@@ -77,12 +78,17 @@ const _Tab = styled.div`
 const _MetadataSubpanel = styled.div`
   width: 100%;
 `;
-const _PictureFileBasename = styled.div`
-  color: ${INSPECTOR_TEXT};
+
+const _MetadataList = styled.div`
   padding: ${MARGIN}px;
-  text-align: center;
+`;
+const _MetadataTitle = styled.div`
+  color: ${INSPECTOR_METADATA_TITLE};
+`;
+const _MedatataValue = styled.div`
+  color: ${INSPECTOR_TEXT};
   width: 100%;
-  word-break:break-all;
+  word-break: break-all;
 `;
 const _TagsTitle = styled.div`
   color: ${INSPECTOR_TEXT};
@@ -271,11 +277,14 @@ export default class extends Component {
         </_Tabs>
         {this.state.selectedTab === TAB_METADATA && (
           <_MetadataSubpanel>
-            <_PictureFileBasename>{this.props.picture.file_basename}</_PictureFileBasename>
             <_TagsTitle>TAGS</_TagsTitle>
             <_Tags>
               {this.props.tags && this.props.tags.map(_ => <_Tag key={this.props.picture.id + ':' + _}>{_}</_Tag>)}
             </_Tags>
+            <_MetadataList>
+              <_MetadataTitle>File name</_MetadataTitle>
+              <_MedatataValue>{this.props.picture.file_basename}</_MedatataValue>
+            </_MetadataList>
           </_MetadataSubpanel>
         )}
         {this.state.selectedTab === TAB_ANNOTATIONS && (

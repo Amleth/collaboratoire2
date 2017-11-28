@@ -41,7 +41,9 @@ const _ExportIcon = styled.i`
 `;
 
 const _Nothing = styled.div`
-  margin-top: 50px;
+  font-size: 200%;
+  height: 100%;
+  padding: 100px;
   text-align: center;
   width: 100%;
 `;
@@ -104,7 +106,7 @@ class Data extends PureComponent {
   render() {
     if (this.props.annotationsMeasuresLinear.length === 0)
       return (
-        <_Nothing>Make at least 1 linear measure on a picture of the current selection to see something here.</_Nothing>
+        <_Nothing>Make at least 1 linear measure on a picture of the current selection to see something here</_Nothing>
       );
 
     let key = 0;

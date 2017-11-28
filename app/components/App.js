@@ -44,7 +44,9 @@ const _Link = styled(Link)`
   }
 `;
 
-const _LinkSymbol = styled.i`font-size: 130% !important;`;
+const _LinkSymbol = styled.i`
+  font-size: 130% !important;
+`;
 
 export default class App extends Component {
   render() {
@@ -61,6 +63,9 @@ export default class App extends Component {
           <_Link to="/image">
             <_LinkSymbol className="fa fa-picture-o" aria-hidden="true" />
           </_Link>
+          {/* <_Link to="/freespace">
+            <_LinkSymbol className="fa fa-th" aria-hidden="true" />
+          </_Link> */}
           <_Link to="/data">
             <_LinkSymbol className="fa fa-list" aria-hidden="true" />
           </_Link>
