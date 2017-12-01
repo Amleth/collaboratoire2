@@ -220,7 +220,7 @@ export default class extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { selectedExploreJsonFile: null, done: false, jobs: [], jobsCompleted: 0, progress: [] };
+    this.state = { selectedExploreJsonFile: null, jobs: [], jobsCompleted: 0, progress: [] };
 
     this.downloadFromExplore = this.downloadFromExplore.bind(this);
   }
@@ -376,7 +376,6 @@ export default class extends Component {
         );
       })
     ).then(results => {
-      // this.setState({ done: true });
       addPicturesDirectory(DESTINATION_DIR);
       toConfigFile();
       remote.relaunch();
@@ -395,11 +394,6 @@ export default class extends Component {
                 this.state.jobs.length
               })
             </h2>
-            {/* {this.state.done && (
-              <button>
-                You may now access your pictures in the library&nbsp; <i className="fa fa-cubes" aria-hidden="true" />
-              </button>
-            )} */}
             {this.state.progress.map(_ => {
               return (
                 <table key={_.id} className={_.status}>
@@ -506,7 +500,16 @@ export default class extends Component {
             </_ImportFromExplorePictures>
             <h3>
               2) Unzip the downloaded <code>.zip</code>, and{' '}
-              <_FileOpenLink onClick={e => this.downloadFromExplore('/Users/amleth/Downloads/1510741434.json')}>
+              <_FileOpenLink
+                onClick={e => {
+                  const _ = remote.dialog.showOpenDialog({
+                    properties: ['openFile'],
+                    filters: [{ name: 'JSON explore file', extensions: ['json'] }]
+                  });
+                  if (!_ || _.length < 1) return;
+                  this.downloadFromExplore(_.pop());
+                }}
+              >
                 open the <code>.json</code> file <i className="fa fa-folder-open-o" aria-hidden="true" />
               </_FileOpenLink>
             </h3>
