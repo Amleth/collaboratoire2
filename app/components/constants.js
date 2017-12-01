@@ -14,18 +14,24 @@ const FG3 = '#FFF';
 
 export const RECOLNAT_CAMILLE_DEGARDIN = '#6C615F';
 
+export const DOC_BG = FG2;
 export const DOC_BORDER = FG1;
-export const DOC_LINK_FG = BG1;
+export const DOC_FG = BG1;
+export const DOC_ICON = BG2;
 export const DOC_LINK_BG = FG2;
+export const DOC_LINK_FG = BG2;
+export const DOC_BUTTON_BG = FG2;
+export const DOC_BUTTON_FG = BG1;
 
 export const MAIN_NAV_BG = BG2;
 export const MAIN_NAV_FG = BG1;
 export const MAIN_NAV_FG_OVER = BG3;
 
+export const PROGRESS_BG = 'white';
 export const PROGRESS_DOWNLOADED = '#B0DB04';
-export const PROGRESS_JOB_BG = BG1;
-export const PROGRESS_JOB_FG1 = FG2;
-export const PROGRESS_JOB_FG2 = FG3;
+export const PROGRESS_FG1 = BG2;
+export const PROGRESS_FG2 = BG3;
+export const PROGRESS_SEP = FG1;
 
 export const SECTION_BG = BG1;
 export const SECTION_BG2 = BG2;

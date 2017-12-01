@@ -1,4 +1,4 @@
-import { shell } from 'electron';
+import { remote, shell } from 'electron';
 import logger from 'electron-logger';
 import fs from 'fs-extra';
 import path from 'path';
@@ -10,19 +10,26 @@ import progress from 'request-progress';
 import styled from 'styled-components';
 
 import {
+  DOC_BG,
   DOC_BORDER,
+  DOC_BUTTON_BG,
+  DOC_BUTTON_FG,
+  DOC_FG,
+  DOC_ICON,
   DOC_LINK_BG,
   DOC_LINK_FG,
   MAIN_NAV_BG,
   MAIN_NAV_FG,
   MAIN_NAV_FG_OVER,
+  PROGRESS_BG,
   PROGRESS_DOWNLOADED,
-  PROGRESS_JOB_BG,
-  PROGRESS_JOB_FG1,
-  PROGRESS_JOB_FG2,
+  PROGRESS_FG1,
+  PROGRESS_FG2,
+  PROGRESS_SEP,
   RECOLNAT_CAMILLE_DEGARDIN
 } from './constants';
 import { USER_DATA_DIR } from '../index';
+import { addPicturesDirectory, getPicturesDirectories, removePicturesDirectory, toConfigFile } from '../config';
 import { formatDate } from '../utils/js';
 import { format } from 'url';
 
@@ -31,12 +38,21 @@ const img_import_from_explore_2 = require('./pictures/explore02.png');
 const RECOLNAT_LOGO = require('./pictures/recolnat_logo.png');
 
 const _Root = styled.div`
+  color: ${DOC_FG};
   height: 100%;
   overflow: scroll;
   width: 100%;
 
   > * {
     padding: 30px;
+  }
+
+  .link:hover {
+    text-decoration: underline;
+  }
+
+  .icon {
+    color: ${DOC_ICON};
   }
 `;
 
@@ -61,10 +77,12 @@ const _Message = styled.div`
   text-align: center;
 `;
 
-const _ImportFromExplore = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+const _ImportSection = styled.div`
+  text-align: center;
+
+  &:nth-child(2) {
+    background-color: ${DOC_BG};
+  }
 
   h2 {
     font-size: 200%;
@@ -73,7 +91,7 @@ const _ImportFromExplore = styled.div`
     width: 100%;
 
     a {
-      color: ${MAIN_NAV_FG_OVER};
+      color: ${DOC_LINK_FG};
 
       &:hover {
         text-decoration: underline;
@@ -93,6 +111,22 @@ const _ImportFromExplore = styled.div`
     max-height: 333px;
     max-width: 333px;
   }
+
+  ul,
+  li {
+    margin: 0;
+    padding: 0;
+  }
+
+  ul {
+    font-size: 120%;
+    list-style-type: none;
+    margin-bottom: 50px;
+  }
+
+  li {
+    font-family: monospace;
+  }
 `;
 
 const _ImportFromExplorePictures = styled.div`
@@ -102,50 +136,82 @@ const _ImportFromExplorePictures = styled.div`
 `;
 
 const _FileOpenLink = styled.span`
-  background-color: ${DOC_LINK_BG};
+  background-color: ${DOC_BUTTON_BG};
+  border: 1px solid ${DOC_BORDER};
   border-radius: 2px;
-  color: ${DOC_LINK_FG};
+  color: ${DOC_BUTTON_FG};
   padding: 0.2em;
 
   &:hover {
-    background-color: ${DOC_LINK_FG};
-    color: ${DOC_LINK_BG};
+    background-color: ${DOC_BUTTON_FG};
+    color: ${DOC_BUTTON_BG};
   }
 `;
 
-const _ProgressList = styled.ul`
-  list-style-type: none;
+const _Progress = styled.div`
+  background-color: ${PROGRESS_BG};
+  color: ${PROGRESS_FG1};
   margin: 0;
-  padding: 0;
+  padding: 30px;
   width: 100%;
 
-  > li {
-    background-color: ${PROGRESS_JOB_BG};
-    margin: 0;
+  > h2 {
+    border: 2px solid ${PROGRESS_FG1};
+    font-size: 200%;
+    margin: 0 0 30px 0;
+    padding: 50px 0;
+    text-align: center;
+    text-transform: uppercase;
+    width: 100%;
+  }
+
+  button {
+    background-color: ${DOC_LINK_BG};
+    border: none;
+    border-radius: 2px;
+    color: ${DOC_LINK_FG};
+    font-size: 133%;
+    margin-bottom: 20px;
+    padding: 1em;
+
+    &:hover {
+      background-color: ${DOC_LINK_FG};
+      color: ${DOC_LINK_BG};
+    }
+  }
+
+  > table {
+    border-collapse: collapse;
+    font-family: monospace;
+    font-size: 120%;
+    margin: 0 0 10px 0;
     padding: 0;
     width: 100%;
 
-    div:nth-child(1) {
-      background: red;
+    i.fa-check {
+      color: ${PROGRESS_DOWNLOADED};
     }
 
-    div:nth-child(2) {
-      background: blue;
-      font-family: monospace;
+    tr: {
+      padding: 2px 0;
     }
 
-    div:nth-child(3) {
-      background: green;
-      font-family: monospace;
+    td:nth-child(1) {
+      padding: 0 7px 0 0;
     }
 
-    div:nth-child(4) {
-      background: yellow;
-      font-family: monospace;
+    tr:nth-child(1) {
+      font-weight: bold;
+      text-transform: uppercase;
     }
 
-    div:nth-child(5) {
-      background: purple;
+    tr:nth-child(2),
+    tr:nth-child(3),
+    tr:nth-child(4) {
+      td:nth-child(2) {
+        color: ${PROGRESS_FG2};
+        font-size: 80%;
+      }
     }
   }
 `;
@@ -154,7 +220,7 @@ export default class extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { selectedExploreJsonFile: null, progress: [] };
+    this.state = { selectedExploreJsonFile: null, done: false, jobs: [], jobsCompleted: 0, progress: [] };
 
     this.downloadFromExplore = this.downloadFromExplore.bind(this);
   }
@@ -169,10 +235,6 @@ export default class extends Component {
     fs.ensureDirSync(DESTINATION_DIR);
 
     const specimens = JSON.parse(fs.readFileSync(selectedExploreJsonFile, 'utf8'));
-
-    console.log(
-      `Downloading ${specimens.length} specimens (pictures & metadata) from explore file: ${selectedExploreJsonFile}`
-    );
 
     // Jobs preparation
 
@@ -207,6 +269,7 @@ export default class extends Component {
       const targetPictureFile = path.join(DESTINATION_DIR, pictureId + '.jpeg');
 
       jobsDescriptions.push({
+        humanid: `${metadata.institutioncode}/${metadata.collectioncode}/${metadata.catalognumber}`,
         id: pictureId,
         metadata,
         pictureUrl,
@@ -217,9 +280,9 @@ export default class extends Component {
 
     // Download pictures
 
-    const limit = promiseLimit(5);
+    const limit = promiseLimit(4);
 
-    const downloadPictureJob = (id, metadata, pictureUrl, targetMetadataFile, targetPictureFile) => {
+    const downloadPictureJob = (humanid, id, metadata, pictureUrl, targetMetadataFile, targetPictureFile) => {
       return new Promise((resolve, reject) => {
         progress(request(pictureUrl))
           .on('progress', state => {
@@ -252,6 +315,7 @@ export default class extends Component {
               this.setState({
                 progress: [
                   {
+                    humanid,
                     id,
                     pictureUrl,
                     status: 'downloading',
@@ -275,6 +339,7 @@ export default class extends Component {
               }
             }
             this.setState({
+              jobsCompleted: this.state.jobsCompleted + 1,
               progress: [
                 ...this.state.progress.slice(0, jobIndex),
                 {
@@ -295,10 +360,13 @@ export default class extends Component {
       });
     };
 
+    this.setState({ jobs: jobsDescriptions });
+
     Promise.all(
       jobsDescriptions.map(jobDescription => {
         return limit(() =>
           downloadPictureJob(
+            jobDescription.humanid,
             jobDescription.id,
             jobDescription.metadata,
             jobDescription.pictureUrl,
@@ -308,27 +376,75 @@ export default class extends Component {
         );
       })
     ).then(results => {
-      console.log(results);
+      // this.setState({ done: true });
+      addPicturesDirectory(DESTINATION_DIR);
+      toConfigFile();
+      remote.relaunch();
+      remote.exit();
     });
   }
 
   render() {
     if (this.state.selectedExploreJsonFile) {
+      let p = 1;
       return (
         <_Root>
-          <_ProgressList>
+          <_Progress>
+            <h2>
+              {this.state.jobs.length} files & their metadata will be downloaded ({this.state.jobsCompleted}/{
+                this.state.jobs.length
+              })
+            </h2>
+            {/* {this.state.done && (
+              <button>
+                You may now access your pictures in the library&nbsp; <i className="fa fa-cubes" aria-hidden="true" />
+              </button>
+            )} */}
             {this.state.progress.map(_ => {
               return (
-                <li key={_.id} className={_.status}>
-                  <div>{_.status}</div>
-                  <div>{_.pictureUrl}</div>
-                  <div>{_.targetMetadataFile}</div>
-                  <div>{_.targetPictureFile}</div>
-                  <div>{`${(_.transferred / 1000 / 1000).toFixed(2)} MB`}</div>
-                </li>
+                <table key={_.id} className={_.status}>
+                  <tbody>
+                    <tr>
+                      <td>
+                        {_.status === 'downloading' ? (
+                          <i className="fa fa-circle-o-notch fa-spin fa-fw" />
+                        ) : (
+                          <i className="fa fa-check fa-fw" />
+                        )}
+                      </td>
+                      <td>{`${_.status} '${_.humanid}' (${(_.transferred / 1000 / 1000).toFixed(2)} MB)`}</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <i className="fa fa-globe fa-fw" />
+                      </td>
+                      <td>
+                        <a className="link" onClick={e => shell.openExternal(_.pictureUrl)}>
+                          {_.pictureUrl}
+                        </a>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <i className="fa fa-file-text-o fa-fw" />
+                      </td>
+                      <td className="link" onClick={e => shell.showItemInFolder(_.targetMetadataFile)}>
+                        {_.targetMetadataFile}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <i className="fa fa-photo fa-fw" />
+                      </td>
+                      <td className="link" onClick={e => shell.showItemInFolder(_.targetPictureFile)}>
+                        {_.targetPictureFile}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               );
             })}
-          </_ProgressList>
+          </_Progress>
         </_Root>
       );
     } else
@@ -340,12 +456,43 @@ export default class extends Component {
             </div>
             <h1>the collaboratory</h1>
           </_Title>
-          <_Message>
-              Version 0.1.0 (2017.11.20)
-          </_Message>
-          {/* <_ImportFromExplore>
+          <_ImportSection>
             <h2>
-              Import pictures & metadata from{' '}
+              <i className="fa fa-desktop fa-fw icon" />&nbsp;On this computer
+            </h2>
+            <ul>
+              {getPicturesDirectories().map(_ => (
+                <li key={_}>
+                  <span className="link" onClick={e => shell.showItemInFolder(_)}>
+                    {_}
+                  </span>
+                  &nbsp;
+                  <i
+                    className="fa fa-minus-square fa-fw icon"
+                    onClick={e => {
+                      removePicturesDirectory(_);
+                      toConfigFile();
+                    }}
+                  />
+                </li>
+              ))}
+            </ul>
+            <h3>
+              <_FileOpenLink
+                onClick={e => {
+                  const _ = remote.dialog.showOpenDialog({ properties: ['openDirectory'] });
+                  if (!_ || _.length < 1) return;
+                  addPicturesDirectory(_.pop());
+                  toConfigFile();
+                }}
+              >
+                Add local directory <i className="fa fa-folder-open-o" aria-hidden="true" />
+              </_FileOpenLink>
+            </h3>
+          </_ImportSection>
+          <_ImportSection>
+            <h2>
+              <i className="fa fa-globe fa-fw icon" />&nbsp;Import pictures & metadata from{' '}
               <a onClick={e => shell.openExternal('https://explore.recolnat.org/')}>explore.recolnat.org</a>
             </h2>
             <h3>1) Select & export:</h3>
@@ -363,7 +510,7 @@ export default class extends Component {
                 open the <code>.json</code> file <i className="fa fa-folder-open-o" aria-hidden="true" />
               </_FileOpenLink>
             </h3>
-          </_ImportFromExplore> */}
+          </_ImportSection>
         </_Root>
       );
   }

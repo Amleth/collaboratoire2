@@ -8,6 +8,7 @@ import { NAV_SIZE, SECTION_BG, SECTION_BG2, SECTION_BG2_OVER, SECTION_FG, SELECT
 import { ANNOTATION_MEASURE_LINEAR, ANNOTATION_POINT_OF_INTEREST, ANNOTATION_RECTANGULAR } from '../data/constants';
 import { getCartesianDistanceInMm, getTopLeftAndBottomRightPointsFromTwoClicks, pixelsToMm } from '../utils/maths';
 import Inspector from '../Containers/Inspector';
+import Nothing from './Nothing';
 
 //
 // STYLE
@@ -222,7 +223,7 @@ class Image extends PureComponent {
   }
 
   render() {
-    if (!this.state.currentPicture) return null;
+    if (!this.state.currentPicture) return <Nothing message={'No picture'} />;
 
     return (
       <_Root>

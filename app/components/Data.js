@@ -12,6 +12,7 @@ import { pixelsToMm } from '../utils/maths';
 import { USER_DATA_DIR } from '../index';
 import { NAV_SIZE, SECTION_BG, SECTION_FG, SECTION_FG_OVER } from '../components/constants';
 import { average, standardDeviation } from '../utils/maths';
+import Nothing from './Nothing';
 
 //
 // STYLING
@@ -38,14 +39,6 @@ const _ExportIcon = styled.i`
     color: ${SECTION_FG_OVER};
     transition: color 250ms ease;
   }
-`;
-
-const _Nothing = styled.div`
-  font-size: 200%;
-  height: 100%;
-  padding: 100px;
-  text-align: center;
-  width: 100%;
 `;
 
 const _GridCell = styled.div``;
@@ -106,7 +99,9 @@ class Data extends PureComponent {
   render() {
     if (this.props.annotationsMeasuresLinear.length === 0)
       return (
-        <_Nothing>Make at least 1 linear measure on a picture of the current selection to see something here</_Nothing>
+        <Nothing
+          message={'Make at least 1 linear measure on a picture of the current selection to see something here'}
+        />
       );
 
     let key = 0;

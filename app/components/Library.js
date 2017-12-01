@@ -25,6 +25,7 @@ import { MARGIN as INSPECTOR_MARGIN, WIDTH as INSPECTOR_WIDTH } from './Inspecto
 import { findPictures } from '../business_logic/tags';
 import { TAGS_SELECTION_MODE_AND, TAGS_SELECTION_MODE_OR } from '../data/constants';
 import Inspector from '../Containers/Inspector';
+import Nothing from './Nothing';
 
 //
 // CONSTANTS
@@ -217,6 +218,9 @@ export default class extends PureComponent {
   }
 
   render() {
+    if (Object.values(this.props.allPictures).length === 0)
+      return <Nothing message={'Declare at least one folder containing pictures'} />;
+
     //TODO This is UGLY!
     const pictures =
       this.props.selectedTags.length === 0

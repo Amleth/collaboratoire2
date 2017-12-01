@@ -1,6 +1,5 @@
 import 'babel-polyfill';
 import Chance from 'chance';
-import configYaml from 'config-yaml';
 import { remote } from 'electron';
 import fs from 'fs-extra';
 import logger from 'electron-logger';
@@ -13,7 +12,7 @@ import rimraf from 'rimraf';
 
 import { RECOLNAT_CAMILLE_DEGARDIN } from './components/constants';
 import Loading from './components/Loading';
-import { getConfig, setConfig } from './config';
+import { fromConfigFile, getPicturesDirectories } from './config';
 import { importExploreJson } from './actions/app';
 import Root from './containers/Root';
 import { createInitialState } from './reducers/app';
@@ -40,13 +39,10 @@ fs.ensureDirSync(THUMBNAILS_DIR);
 logger.setOutput({ file: path.join(CACHE_DIR, 'log.log') });
 
 // Read config file
-setConfig(configYaml(path.join(remote.app.getPath('home'), 'collaboratoire2-config.yml')));
-const PICTURE_DIRECTORIES = getConfig()['pictures_directories'];
+fromConfigFile();
 
-// Wait for library init
-render(<Loading directories={PICTURE_DIRECTORIES} loadingEventEmitter={ee} />, document.getElementById('root'));
-initPicturesLibrary(CACHE_FILE, THUMBNAILS_DIR, PICTURE_DIRECTORIES);
-ee.on(EVENT_COMPLETE, picturesArray => {
+// Callback which boot the app
+const go = picturesArray => {
   const picturesObject = {};
   for (const p of picturesArray) {
     picturesObject[p.id] = p;
@@ -60,6 +56,7 @@ ee.on(EVENT_COMPLETE, picturesArray => {
 
   console.log(`${new Date().getTime() - start}ms`);
 
+  // Ugly hack to be sure to start at the '/' route
   setTimeout(function() {
     store.dispatch(push('/'));
   }, 500);
@@ -82,4 +79,15 @@ ee.on(EVENT_COMPLETE, picturesArray => {
       );
     });
   }
-});
+};
+
+// Wait for library init
+if (getPicturesDirectories().length > 0) {
+  render(<Loading directories={getPicturesDirectories()} loadingEventEmitter={ee} />, document.getElementById('root'));
+  initPicturesLibrary(CACHE_FILE, THUMBNAILS_DIR, getPicturesDirectories());
+  ee.on(EVENT_COMPLETE, picturesArray => {
+    go(picturesArray);
+  });
+} else {
+  go([]);
+}
