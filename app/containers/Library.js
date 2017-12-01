@@ -1,8 +1,10 @@
 import { connect } from 'react-redux';
+import { push } from 'react-router-redux';
 
 import {
   createTag,
   selectTag,
+  setPictureInSelection,
   setPicturesSelection,
   setTagsSelectionMode,
   tagPicture,
@@ -34,6 +36,9 @@ const mapDispatchToProps = dispatch => {
     selectTag: name => {
       dispatch(selectTag(name));
     },
+    setPictureInSelection: pictureId => {
+      dispatch(setPictureInSelection(pictureId));
+    },
     setPicturesSelection: pictureSelection => {
       dispatch(setPicturesSelection(pictureSelection));
     },
@@ -48,6 +53,9 @@ const mapDispatchToProps = dispatch => {
     },
     untagPicture: (pictureId, tagName) => {
       dispatch(untagPicture(pictureId, tagName));
+    },
+    goToImage: () => {
+      dispatch(push('/image'));
     }
   };
 };

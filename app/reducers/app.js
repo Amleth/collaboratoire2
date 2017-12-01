@@ -14,6 +14,7 @@ import {
   NEXT_PICTURE_IN_SELECTION,
   PREVIOUS_PICTURE_IN_SELECTION,
   SELECT_TAG,
+  SET_PICTURE_IN_SELECTION,
   SET_PICTURES_SELECTION,
   SET_TAGS_SELECTION_MODE,
   TAG_ANNOTATION,
@@ -238,6 +239,10 @@ export default (state = {}, action) => {
     case SELECT_TAG:
       if (state.selected_tags.indexOf(action.name) !== -1) return state;
       return { ...state, selected_tags: [action.name, ...state.selected_tags] };
+      break;
+    case SET_PICTURE_IN_SELECTION:
+      const index = state.pictures_selection.indexOf(action.pictureId);
+      return { ...state, current_picture_index_in_selection: index };
       break;
     case SET_PICTURES_SELECTION:
       return { ...state, pictures_selection: action.pictures_selection, current_picture_index_in_selection: 0 };

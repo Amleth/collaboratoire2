@@ -323,6 +323,10 @@ export default class extends PureComponent {
                               this.props.tagPicture(rowData.id, e.dataTransfer.getData('tagName'));
                             }}
                             onMouseOver={e => this.setState({ currentPicture: rowData })}
+                            onDoubleClick={e => {
+                              this.props.setPictureInSelection(rowData.id);
+                              this.props.goToImage();
+                            }}
                           >
                             {rowData.file_basename}
                           </_FileName>
