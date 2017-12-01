@@ -37,6 +37,7 @@ const _PictureWrapper = styled.div`
 
 const _Header = styled.div`
   background-color: ${SECTION_BG};
+  border-bottom: 1px solid ${SECTION_BG2};
   color: ${SECTION_FG};
   display: flex;
   font-size: 150%;
@@ -101,8 +102,18 @@ const _LeftColumn = styled.div`
   width: ${NAV_SIZE};
 `;
 
+const _ViewerInfo = styled.div`
+  background-color: ${SECTION_BG};
+  color: ${SECTION_FG};
+  font-family: monospace;
+  padding: 5px;
+  text-align: center;
+  width: 100%;
+`;
+
 const _Hud = styled.div`
-  color: black;
+  background-color: ${SECTION_BG};
+  color: ${SECTION_FG};
   font-family: monospace;
   padding: 5px;
   text-align: center;
@@ -200,7 +211,8 @@ class Image extends PureComponent {
       pendingAnnotationRectangleX: 0,
       pendingAnnotationRectangleY: 0,
       pendingAnnotationRectangleHeight: 0,
-      pendingAnnotationRectangleWidth: 0
+      pendingAnnotationRectangleWidth: 0,
+      zoomLevel: null
     };
 
     this.click_reactsvgpanzoom = this.click_reactsvgpanzoom.bind(this);
@@ -269,6 +281,13 @@ class Image extends PureComponent {
         </_Header>
         <_PictureWrapper>
           <_LeftColumn>
+            {this.state.zoomLevel && (
+              <_ViewerInfo>
+                <i className="fa fa-search fa" aria-hidden="true" />
+                &nbsp;
+                {`${(100 * this.state.zoomLevel).toFixed(2)}%`}
+              </_ViewerInfo>
+            )}
             {this.state.hudContent && <_Hud>{this.state.hudContent}</_Hud>}
             <Inspector
               annotationsMeasuresLinear={this.props.annotationsMeasuresLinear[this.state.currentPicture.id]}
@@ -291,6 +310,7 @@ class Image extends PureComponent {
                   height={height}
                   onClick={this.click_reactsvgpanzoom}
                   onMouseMove={this.mouseMove_reactsvgpanzoom}
+                  onChangeValue={this.onChangeValue}
                 >
                   <svg width={this.state.currentPicture.width} height={this.state.currentPicture.height}>
                     <g>
@@ -394,6 +414,10 @@ class Image extends PureComponent {
   }
 
   // GESTURE HANDLERS
+
+  onChangeValue = e => {
+    this.setState({ zoomLevel: e.d });
+  };
 
   click_reactsvgpanzoom(evt) {
     const { x, y } = evt;
