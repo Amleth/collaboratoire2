@@ -111,18 +111,12 @@ const _Tag = styled.div`
   height: ${TAG_HEIGHT}px;
   margin: 0 2px 2px 0;
   padding: 2px;
-
+`;
+const _TagIcon = styled.i`
+  color: ${INSPECTOR_ANNOTATION_TEXT2};
   &:hover {
-    background-color: ${TAG_BG_OVER};
-    color: ${TAG_FG_OVER};
+    color: ${INSPECTOR_ANNOTATION_TEXT1};
   }
-
-  ${props =>
-    props.selected &&
-    css`
-      background-color: ${TAG_BG_OVER};
-      color: ${TAG_FG_OVER};
-    `};
 `;
 
 const _AnnotationsSubPanel = styled.div`
@@ -282,7 +276,7 @@ export default class extends Component {
               {this.props.tags &&
                 this.props.tags.map(_ => (
                   <_Tag key={this.props.picture.id + ':' + _}>
-                    {_}&nbsp;<i
+                    {_}&nbsp;<_TagIcon
                       className="fa fa-trash fa"
                       aria-hidden="true"
                       onClick={e => {
