@@ -279,7 +279,18 @@ export default class extends Component {
           <_MetadataSubpanel>
             <_TagsTitle>TAGS</_TagsTitle>
             <_Tags>
-              {this.props.tags && this.props.tags.map(_ => <_Tag key={this.props.picture.id + ':' + _}>{_}</_Tag>)}
+              {this.props.tags &&
+                this.props.tags.map(_ => (
+                  <_Tag key={this.props.picture.id + ':' + _}>
+                    {_}&nbsp;<i
+                      className="fa fa-trash fa"
+                      aria-hidden="true"
+                      onClick={e => {
+                        this.props.untagPicture(this.props.picture.id, _);
+                      }}
+                    />
+                  </_Tag>
+                ))}
             </_Tags>
             <_MetadataList>
               <_MetadataTitle>File name</_MetadataTitle>

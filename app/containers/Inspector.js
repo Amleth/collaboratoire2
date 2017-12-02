@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import Component from '../components/Inspector';
-import { editAnnotation, focusAnnotation } from '../actions/app';
+import { editAnnotation, focusAnnotation, untagAnnotation, untagPicture } from '../actions/app';
 
 const mapStateToProps = (state, ownProps) => {
   return {};
@@ -13,6 +13,9 @@ const mapDispatchToProps = dispatch => {
     },
     focusAnnotation: (annotationId, annotationType, pictureId) => {
       dispatch(focusAnnotation(annotationId, annotationType, pictureId));
+    },
+    untagPicture: (pictureId, tagName) => {
+      dispatch(untagPicture(pictureId, tagName));
     }
   };
 };

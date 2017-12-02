@@ -282,6 +282,30 @@ export default (state = {}, action) => {
         ]
       };
       break;
+    case UNTAG_PICTURE:
+      {
+        const i = state.tags_by_picture[action.pictureId].indexOf(action.tagName);
+        const j = state.pictures_by_tag[action.tagName].indexOf(action.pictureId);
+
+        return {
+          ...state,
+          tags_by_picture: {
+            ...state.tags_by_picture,
+            [action.pictureId]: [
+              ...state.tags_by_picture[action.pictureId].slice(0, i),
+              ...state.tags_by_picture[action.pictureId].slice(i + 1)
+            ]
+          },
+          pictures_by_tag: {
+            ...state.pictures_by_tag,
+            [action.tagName]: [
+              ...state.pictures_by_tag[action.tagName].slice(0, j),
+              ...state.pictures_by_tag[action.tagName].slice(j + 1)
+            ]
+          }
+        };
+      }
+      break;
     default:
       return state;
   }

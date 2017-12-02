@@ -12,7 +12,7 @@ import rimraf from 'rimraf';
 
 import { RECOLNAT_CAMILLE_DEGARDIN } from './components/constants';
 import Loading from './components/Loading';
-import { fromConfigFile, getPicturesDirectories } from './config';
+import { fromConfigFile, getPicturesDirectories, setConfigFilePath } from './config';
 import { importExploreJson } from './actions/app';
 import Root from './containers/Root';
 import { createInitialState } from './reducers/app';
@@ -39,6 +39,7 @@ fs.ensureDirSync(THUMBNAILS_DIR);
 logger.setOutput({ file: path.join(CACHE_DIR, 'log.log') });
 
 // Read config file
+setConfigFilePath(path.join(remote.app.getPath('home'), 'collaboratoire2-config.yml'));
 fromConfigFile();
 
 // Callback which boot the app

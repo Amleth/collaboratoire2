@@ -3,23 +3,24 @@ import { remote } from 'electron';
 import path from 'path';
 import yaml from 'write-yaml';
 
-const CONFIG_FILE_PATH = path.join(remote.app.getPath('home'), 'collaboratoire2-config.yml');
-
 let config;
+let config_file_path;
 
 export const get = () => config;
 export const set = _ => (config = _);
 
+export const setConfigFilePath = _ => (config_file_path = _);
+
 export const fromConfigFile = () => {
   try {
-    config = configYaml(CONFIG_FILE_PATH);
+    config = configYaml(config_file_path);
   } catch (e) {
     config = {};
   }
 };
 
 export const toConfigFile = () => {
-  yaml.sync(CONFIG_FILE_PATH, config);
+  yaml.sync(config_file_path, config);
   remote.app.relaunch();
   remote.app.exit();
 };
