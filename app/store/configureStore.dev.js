@@ -1,5 +1,7 @@
 import { createHashHistory } from 'history';
-import { createStore, applyMiddleware, compose } from 'redux';
+import { combineReducers, createStore, applyMiddleware, compose } from 'redux';
+// import { persistStore, persistCombineReducers } from 'redux-persist';
+// import storage from 'redux-persist/es/storage';
 import { createLogger } from 'redux-logger';
 import { routerMiddleware, routerActions } from 'react-router-redux';
 import thunk from 'redux-thunk';
@@ -48,7 +50,10 @@ const configureStore = initialState => {
   const enhancer = composeEnhancers(...enhancers);
 
   // Create Store
-  const store = createStore(rootReducer, initialState, enhancer);
+  // const config = { key: 'root', storage };
+  // const store = createStore(persistCombineReducers(config, rootReducer), initialState, enhancer);
+  const store = createStore(combineReducers(rootReducer), initialState, enhancer);
+  // const persistor = persistStore(store);
 
   if (module.hot) {
     module.hot.accept(
@@ -57,7 +62,8 @@ const configureStore = initialState => {
     );
   }
 
-  return store;
+  // return { persistor, store };
+  return { store };
 };
 
 export default { configureStore, history };

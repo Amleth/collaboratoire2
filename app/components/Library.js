@@ -335,6 +335,17 @@ export default class extends PureComponent {
                     }}
                     key={key++}
                   />
+                  <Column
+                    dataKey="erecolnatMetadata"
+                    disableSort={true}
+                    label="Catalog N°"
+                    width={0.1 * width}
+                    key={key++}
+                    cellRenderer={({ cellData, rowData }) => {
+                      if (rowData.erecolnatMetadata) return rowData.erecolnatMetadata.catalognumber;
+                      else return '';
+                    }}
+                  />
                   <Column dataKey="width" label="Width" width={0.1 * width} key={key++} />
                   <Column dataKey="height" label="Height" width={0.1 * width} key={key++} />
                   <Column dataKey="dpix" label="DPI" width={0.1 * width} key={key++} />

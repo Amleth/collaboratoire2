@@ -18,6 +18,7 @@ import Root from './containers/Root';
 import { createInitialState } from './reducers/app';
 import { configureStore, history } from './store/configureStore';
 import { ee, EVENT_COMPUTING_PICTURE, EVENT_COMPLETE, initPicturesLibrary } from './system/library';
+import { getMetadata } from './system/erecolnat-metadata';
 
 import './app.global.css';
 import 'react-virtualized/styles.css';
@@ -44,6 +45,7 @@ fromConfigFile();
 
 // Callback which boot the app
 const go = picturesArray => {
+  // Restructure pictures data
   const picturesObject = {};
   for (const p of picturesArray) {
     picturesObject[p.id] = p;
@@ -53,7 +55,13 @@ const go = picturesArray => {
   const initialState = createInitialState();
   initialState.app.pictures = picturesObject;
   initialState.app.pictures_selection = Object.keys(picturesObject);
-  const store = configureStore(initialState);
+  const store = configureStore(initialState).store;
+
+  // add erecolnat metadata
+  for (const p in store.getState().app.pictures) {
+    const erecolnatMetadata = getMetadata(store.getState().app.pictures[p].file);
+    if (erecolnatMetadata) store.getState().app.pictures[p].erecolnatMetadata = erecolnatMetadata;
+  }
 
   console.log(`${new Date().getTime() - start}ms`);
 

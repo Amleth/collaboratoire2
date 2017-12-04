@@ -1,3 +1,4 @@
+import { shell } from 'electron';
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import styled, { css } from 'styled-components';
@@ -26,6 +27,7 @@ import {
 } from './constants';
 import AnnotationEditor from '../containers/AnnotationEditor';
 import { ANNOTATION_MEASURE_LINEAR, ANNOTATION_POINT_OF_INTEREST, ANNOTATION_RECTANGULAR } from '../data/constants';
+import { METADATA_TITLES, METADATA_DETERMINATIONS_TITLES } from '../system/erecolnat-metadata';
 
 // STATE CONSTANTS
 
@@ -51,6 +53,7 @@ const _Tabs = styled.div`
   display: flex;
   flex-direction: row;
   min-height: ${TAB_HEIGHT}px;
+  overflow: scroll;
   width: 100%;
 `;
 const _Tab = styled.div`
@@ -76,12 +79,15 @@ const _Tab = styled.div`
     `};
 `;
 const _MetadataSubpanel = styled.div`
+  overflow: scroll;
   width: 100%;
 `;
 
 const _MetadataList = styled.div`
+  overflow: scroll;
   padding: ${MARGIN}px;
 `;
+const _Metadata = styled.div``;
 const _MetadataTitle = styled.div`
   color: ${INSPECTOR_METADATA_TITLE};
 `;
@@ -90,6 +96,26 @@ const _MedatataValue = styled.div`
   width: 100%;
   word-break: break-all;
 `;
+const _MetadataDeterminationsList = styled.ul`
+  list-style-type: circle;
+  margin: 0 0 0 20px;
+  padding: 0;
+`;
+const _MetadataDetermination = styled.li``;
+
+const _LinksList = styled.div`
+  border-bottom: 1px solid ${INSPECTOR_METADATA_TITLE};
+  border-top: 1px solid ${INSPECTOR_METADATA_TITLE};
+  color: ${INSPECTOR_METADATA_TITLE};
+  margin: 15px 0;
+  padding: 5px 0;
+`;
+const _LinkValue = styled.div`
+  a:hover {
+    color: ${INSPECTOR_TEXT};
+  }
+`;
+
 const _TagsTitle = styled.div`
   color: ${INSPECTOR_TEXT};
   font-size: 150%;
@@ -287,8 +313,80 @@ export default class extends Component {
                 ))}
             </_Tags>
             <_MetadataList>
-              <_MetadataTitle>File name</_MetadataTitle>
-              <_MedatataValue>{this.props.picture.file_basename}</_MedatataValue>
+              <_Metadata>
+                <_MetadataTitle>File name</_MetadataTitle>
+                <_MedatataValue>{this.props.picture.file_basename}</_MedatataValue>
+              </_Metadata>
+              {this.props.picture.erecolnatMetadata && (
+                <_LinksList>
+                  <_LinkValue>
+                    <a
+                      onClick={e =>
+                        shell.openExternal(
+                          `https://explore.recolnat.org/search/botanique/type=advanced&catalognumber=${
+                            this.props.picture.erecolnatMetadata.catalognumber
+                          }`
+                        )
+                      }
+                    >
+                      <i className="fa fa-link fa" aria-hidden="true" /> explore.recolnat.org
+                    </a>
+                  </_LinkValue>
+                  <_LinkValue>
+                    <a
+                      onClick={e =>
+                        shell.openExternal(
+                          `http://lesherbonautes.mnhn.fr/specimens/${
+                            this.props.picture.erecolnatMetadata.institutioncode
+                          }/${this.props.picture.erecolnatMetadata.collectioncode}/${
+                            this.props.picture.erecolnatMetadata.catalognumber
+                          }`
+                        )
+                      }
+                    >
+                      <i className="fa fa-link fa" aria-hidden="true" /> Les Herbonautes
+                    </a>
+                  </_LinkValue>
+                </_LinksList>
+              )}
+              {this.props.picture.erecolnatMetadata &&
+                Object.keys(METADATA_TITLES).map(_ => {
+                  if (_ === 'determinations') {
+                  } else {
+                    return (
+                      <_Metadata key={'erecolnat_metadata' + _}>
+                        <_MetadataTitle>{METADATA_TITLES[_]}</_MetadataTitle>
+                        <_MedatataValue>{this.props.picture.erecolnatMetadata[_]}</_MedatataValue>
+                      </_Metadata>
+                    );
+                  }
+                })}
+              {this.props.picture.erecolnatMetadata &&
+                this.props.picture.erecolnatMetadata.determinations &&
+                this.props.picture.erecolnatMetadata.determinations.length > 0 && (
+                  <_Metadata key={'erecolnat_metadata_determinations'}>
+                    <div>&nbsp;</div>
+                    <_MetadataTitle>{`${METADATA_TITLES.determinations} (${
+                      this.props.picture.erecolnatMetadata.determinations.length
+                    })`}</_MetadataTitle>
+                    <_MetadataDeterminationsList>
+                      {this.props.picture.erecolnatMetadata.determinations.map(determination => {
+                        return (
+                          <_MetadataDetermination key={Math.random()}>
+                            {Object.keys(METADATA_DETERMINATIONS_TITLES).map(_ => {
+                              return (
+                                <_Metadata key={'erecolnat_metadata_determination_' + _}>
+                                  <_MetadataTitle>{METADATA_DETERMINATIONS_TITLES[_]}</_MetadataTitle>
+                                  <_MedatataValue>{determination[_]}</_MedatataValue>
+                                </_Metadata>
+                              );
+                            })}
+                          </_MetadataDetermination>
+                        );
+                      })}
+                    </_MetadataDeterminationsList>
+                  </_Metadata>
+                )}
             </_MetadataList>
           </_MetadataSubpanel>
         )}
