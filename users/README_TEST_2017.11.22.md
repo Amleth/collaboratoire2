@@ -8,8 +8,6 @@ La version 0.1.0 de l'application est téléchargeable :
 
 Dans ce premier test, nous vous demandons de commenter l'ergonomie générale en matière d'organisation des images et d'annotation. Cette version ne sauvegarde pas les mesures et annotations : à chaque fois que vous relancerez l'application, vous repartirez dans un état vierge. La sauvegarde des annotations sera activée une fois les premiers tests effectués.
 
-Avant de lancer l'application, vous devez lui faire connaître les dossiers de votre disque dur qui contiennent les images avec lesquelles vous souhaitez travailler. Ceci s'effectue, pour l'instant, manuellement, hors de l'application, dans un petit fichier de configuration. Cette étape préliminaire et détaillée [ici](README.md).
-
 Gilles Bertin (```gilles.bertin(at)cnam.fr```) a rédigé un [document d'aide illustré](../Collaboratoire%202%20-%20Aide.pdf), qui documente l'ensemble des écrans de l'application et des fonctions proposées à ce jour. Nous vous invitons à le consulter avant de lancer le Collaboratoire 2.
 
 Pour ce premier test, nous vous proposons le cheminement suivant :
