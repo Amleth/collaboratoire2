@@ -53,7 +53,6 @@ const _Tabs = styled.div`
   display: flex;
   flex-direction: row;
   min-height: ${TAB_HEIGHT}px;
-  overflow: scroll;
   width: 100%;
 `;
 const _Tab = styled.div`
@@ -79,12 +78,10 @@ const _Tab = styled.div`
     `};
 `;
 const _MetadataSubpanel = styled.div`
-  overflow: scroll;
   width: 100%;
 `;
 
 const _MetadataList = styled.div`
-  overflow: scroll;
   padding: ${MARGIN}px;
 `;
 const _Metadata = styled.div``;
