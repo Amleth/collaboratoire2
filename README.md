@@ -1,4 +1,4 @@
-Cette application reposant sur [electron-react-boilerplate](https://github.com/chentsulin/electron-react-boilerplate).
+Cette application repose sur [electron-react-boilerplate](https://github.com/chentsulin/electron-react-boilerplate).
 
 Problèmes rencontrés :
 
