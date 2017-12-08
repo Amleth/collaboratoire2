@@ -10,9 +10,13 @@ import {
   DELETE_ANNOTATION_RECTANGULAR,
   DELETE_TAG,
   EDIT_ANNOTATION,
+  FIRST_PICTURE_IN_SELECTION,
   FOCUS_ANNOTATION,
+  LAST_PICTURE_IN_SELECTION,
   NEXT_PICTURE_IN_SELECTION,
+  NEXT_TEN_PICTURE_IN_SELECTION,
   PREVIOUS_PICTURE_IN_SELECTION,
+  PREVIOUS_TEN_PICTURE_IN_SELECTION,
   SELECT_TAG,
   SET_PICTURE_IN_SELECTION,
   SET_PICTURES_SELECTION,
@@ -147,14 +151,7 @@ export default (state = {}, action) => {
       if (alreadyExists) return state;
       return {
         ...state,
-        tags: [
-          {
-            name: action.name,
-            creationDate: NOW_DATE,
-            creationTimestamp: NOW_TIMESTAMP
-          },
-          ...state.tags
-        ]
+        tags: [{ name: action.name, creationDate: NOW_DATE, creationTimestamp: NOW_TIMESTAMP }, ...state.tags]
       };
       break;
     case DELETE_ANNOTATION_MEASURE_LINEAR:
@@ -217,6 +214,9 @@ export default (state = {}, action) => {
         }
       };
       break;
+    case FIRST_PICTURE_IN_SELECTION:
+      return { ...state, current_picture_index_in_selection: 0 };
+      break;
     case FOCUS_ANNOTATION:
       return {
         ...state,
@@ -227,6 +227,9 @@ export default (state = {}, action) => {
         }
       };
       break;
+    case LAST_PICTURE_IN_SELECTION:
+      return { ...state, current_picture_index_in_selection: state.pictures_selection.length - 1 };
+      break;
     case NEXT_PICTURE_IN_SELECTION:
       {
         let current_picture_index_in_selection = state.current_picture_index_in_selection;
@@ -236,6 +239,13 @@ export default (state = {}, action) => {
         return { ...state, current_picture_index_in_selection };
       }
       break;
+    case NEXT_TEN_PICTURE_IN_SELECTION:
+      return {
+        ...state,
+        current_picture_index_in_selection:
+          (state.current_picture_index_in_selection + 10) % state.pictures_selection.length
+      };
+      break;
     case PREVIOUS_PICTURE_IN_SELECTION:
       {
         let current_picture_index_in_selection = state.current_picture_index_in_selection;
@@ -243,6 +253,18 @@ export default (state = {}, action) => {
           current_picture_index_in_selection = state.pictures_selection.length - 1;
         else current_picture_index_in_selection--;
         return { ...state, current_picture_index_in_selection };
+      }
+      break;
+    case PREVIOUS_TEN_PICTURE_IN_SELECTION:
+      {
+        let _ = (state.current_picture_index_in_selection - 10) % state.pictures_selection.length;
+        while (_ < 1) {
+          _ += 49;
+        }
+        return {
+          ...state,
+          current_picture_index_in_selection: _
+        };
       }
       break;
     case SELECT_TAG:

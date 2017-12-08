@@ -7,8 +7,12 @@ import {
   deleteAnnotationMeasureLinear,
   deleteAnnotationPointOfInterest,
   deleteAnnotationRectangular,
+  firstPictureInSelection,
+  lastPictureInSelection,
   nextPictureInSelection,
-  previousPictureInSelection
+  nextTenPictureInSelection,
+  previousPictureInSelection,
+  previousTenPictureInSelection
 } from '../actions/app';
 
 const mapStateToProps = state => {
@@ -38,6 +42,8 @@ const mapDispatchToProps = dispatch => {
     deleteAnnotationMeasureLinear: (pictureId, annotationId) => {
       dispatch(deleteAnnotationMeasureLinear(pictureId, annotationId));
     },
+    firstPictureInSelection: () => dispatch(firstPictureInSelection()),
+    lastPictureInSelection: () => dispatch(lastPictureInSelection()),
     deleteAnnotationPointOfInterest: (pictureId, annotationId) => {
       dispatch(deleteAnnotationPointOfInterest(pictureId, annotationId));
     },
@@ -45,7 +51,9 @@ const mapDispatchToProps = dispatch => {
       dispatch(deleteAnnotationRectangular(pictureId, annotationId));
     },
     nextPictureInSelection: () => dispatch(nextPictureInSelection()),
-    previousPictureInSelection: () => dispatch(previousPictureInSelection())
+    nextTenPictureInSelection: () => dispatch(nextTenPictureInSelection()),
+    previousPictureInSelection: () => dispatch(previousPictureInSelection()),
+    previousTenPictureInSelection: () => dispatch(previousTenPictureInSelection())
   };
 };
 

@@ -53,7 +53,9 @@ const _PicturesBrowsingWrapper = styled.div`
 const _ImageBrowsingButton = styled.span`
   background-color: ${SECTION_BG2};
   color: ${SECTION_FG};
-  padding: 0 20px;
+  min-width: 30px;
+  padding: 0 5px;
+  text-align: center;
   transition: background-color 500ms ease;
 
   &:hover {
@@ -257,8 +259,14 @@ class Image extends PureComponent {
       <_Root>
         <_Header>
           <_PicturesBrowsingWrapper>
+            <_ImageBrowsingButton onClick={e => this.props.firstPictureInSelection()}>
+              <i className="fa fa-fast-backward fa" aria-hidden="true" />
+            </_ImageBrowsingButton>
+            <_ImageBrowsingButton onClick={e => this.props.previousTenPictureInSelection()}>
+              <i className="fa fa-backward fa" aria-hidden="true" />
+            </_ImageBrowsingButton>{' '}
             <_ImageBrowsingButton onClick={e => this.props.previousPictureInSelection()}>
-              <i className="fa fa-caret-left fa" aria-hidden="true" />
+              <i className="fa fa-step-backward fa" aria-hidden="true" />
             </_ImageBrowsingButton>
             <_CurrentPicture>
               {`Picture n° ${this.props.currentPictureIndexInSelection + 1}/${
@@ -266,7 +274,13 @@ class Image extends PureComponent {
               } in current selection`}
             </_CurrentPicture>
             <_ImageBrowsingButton onClick={e => this.props.nextPictureInSelection()}>
-              <i className="fa fa-caret-right fa" aria-hidden="true" />
+              <i className="fa fa-step-forward fa" aria-hidden="true" />
+            </_ImageBrowsingButton>
+            <_ImageBrowsingButton onClick={e => this.props.nextTenPictureInSelection()}>
+              <i className="fa fa-forward fa" aria-hidden="true" />
+            </_ImageBrowsingButton>
+            <_ImageBrowsingButton onClick={e => this.props.lastPictureInSelection()}>
+              <i className="fa fa-fast-forward fa" aria-hidden="true" />
             </_ImageBrowsingButton>
           </_PicturesBrowsingWrapper>
           <_SelectedAnnotationTool>

@@ -11,9 +11,13 @@ export const DELETE_ANNOTATION_POINT_OF_INTEREST = 'DELETE_ANNOTATION_POINT_OF_I
 export const DELETE_ANNOTATION_RECTANGULAR = 'DELETE_ANNOTATION_RECTANGULAR';
 export const DELETE_TAG = 'DELETE_TAG';
 export const EDIT_ANNOTATION = 'EDIT_ANNOTATION';
+export const FIRST_PICTURE_IN_SELECTION = 'FIRST_PICTURE_IN_SELECTION';
 export const FOCUS_ANNOTATION = 'FOCUS_ANNOTATION';
+export const LAST_PICTURE_IN_SELECTION = 'LAST_PICTURE_IN_SELECTION';
 export const NEXT_PICTURE_IN_SELECTION = 'NEXT_PICTURE_IN_SELECTION';
+export const NEXT_TEN_PICTURE_IN_SELECTION = 'NEXT_TEN_PICTURE_IN_SELECTION';
 export const PREVIOUS_PICTURE_IN_SELECTION = 'PREVIOUS_PICTURE_IN_SELECTION';
+export const PREVIOUS_TEN_PICTURE_IN_SELECTION = 'PREVIOUS_TEN_PICTURE_IN_SELECTION';
 export const SELECT_TAG = 'SELECT_TAG';
 export const SET_PICTURE_IN_SELECTION = 'SET_PICTURE_IN_SELECTION';
 export const SET_PICTURES_SELECTION = 'SET_PICTURES_SELECTION';
@@ -94,6 +98,10 @@ export const editAnnotation = (pictureId, annotationType, annotationId, title, t
   title
 });
 
+export const firstPictureInSelection = () => ({
+  type: FIRST_PICTURE_IN_SELECTION
+});
+
 export const focusAnnotation = (annotationId, annotationType, pictureId) => ({
   type: FOCUS_ANNOTATION,
   annotationId,
@@ -101,12 +109,24 @@ export const focusAnnotation = (annotationId, annotationType, pictureId) => ({
   pictureId
 });
 
+export const lastPictureInSelection = () => ({
+  type: LAST_PICTURE_IN_SELECTION
+});
+
 export const nextPictureInSelection = () => ({
   type: NEXT_PICTURE_IN_SELECTION
 });
 
+export const nextTenPictureInSelection = () => ({
+  type: NEXT_TEN_PICTURE_IN_SELECTION
+});
+
 export const previousPictureInSelection = () => ({
   type: PREVIOUS_PICTURE_IN_SELECTION
+});
+
+export const previousTenPictureInSelection = () => ({
+  type: PREVIOUS_TEN_PICTURE_IN_SELECTION
 });
 
 export const selectTag = name => ({
