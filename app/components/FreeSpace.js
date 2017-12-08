@@ -41,16 +41,26 @@ export default class extends Component {
     this.positions = {};
     this.isDragging = false;
     this.selectedElement = null;
+    this.localX = null;
+    this.localY = null;
     this.props.picturesSelection.map(p => (this.positions[p] = { x: Math.random() * 9000, y: Math.random() * 9000 }));
 
-    this.state = { draggedElementX: null, draggedElementY: null };
+    this.state = { draggedElementX: null, draggedElementY: null, zoomLevel: null };
 
-    setTimeout(() => this.Viewer.fitToViewer(), 1000);
+    setTimeout(() => this.Viewer && this.Viewer.fitToViewer(), 1000);
   }
 
   render() {
     if (process.env.NODE_ENV !== 'development' && this.props.picturesSelection.length > PICTURES_NUMBER_LIMIT)
       return <_Message>No more than {PICTURES_NUMBER_LIMIT} pictures may be displayed</_Message>;
+
+    // We need selectedElement to be at the end of this.props.picturesSelection,
+    // so that it will be rendered on top of other elements
+    const picturesSelection = this.props.picturesSelection;
+    if (this.selectedElement) {
+      picturesSelection.splice(this.props.picturesSelection.indexOf(this.selectedElement), 1);
+      picturesSelection.push(this.selectedElement);
+    }
 
     return (
       <_Root>
@@ -62,10 +72,11 @@ export default class extends Component {
                 ref={_ => (this.Viewer = _)}
                 width={width}
                 height={height}
+                onChangeValue={this.onChangeValue}
                 onMouseMove={this.handleMouseMove}
               >
                 <svg height={10000} width={10000}>
-                  {this.props.picturesSelection.map(p => {
+                  {picturesSelection.map(p => {
                     return (
                       <image
                         onMouseDown={e => this.handleMouseDownOnElement(e, p)}
@@ -77,14 +88,15 @@ export default class extends Component {
                         key={`freespaceelement_${p}`}
                         x={
                           p === this.selectedElement && this.state.draggedElementX
-                            ? this.state.draggedElementX - 25
+                            ? this.state.draggedElementX - this.localX
                             : this.positions[p].x
                         }
                         y={
                           p === this.selectedElement && this.state.draggedElementY
-                            ? this.state.draggedElementY - 25
+                            ? this.state.draggedElementY - this.localY
                             : this.positions[p].y
                         }
+                        id={p}
                       />
                     );
                   })}
@@ -97,27 +109,29 @@ export default class extends Component {
     );
   }
 
+  onChangeValue = e => {
+    this.setState({ zoomLevel: e.d });
+  };
+
   handleMouseMove = e => {
     if (!this.isDragging) return;
     this.setState({ draggedElementX: e.x, draggedElementY: e.y });
-    this.print();
   };
 
-  handleMouseDownOnElement = (e, picture) => {
+  handleMouseDownOnElement = (evt, picture) => {
+    const dim = evt.target.getBoundingClientRect();
+    this.localX = (evt.clientX - dim.left) / this.state.zoomLevel;
+    this.localY = (evt.clientY - dim.top) / this.state.zoomLevel;
     this.selectedElement = picture;
     this.isDragging = true;
-    this.print();
   };
 
   handleMouseUpOnElement = (e, picture) => {
     this.isDragging = false;
-    if (this.state.draggedElementX) this.positions[picture].x = this.state.draggedElementX - 25;
-    if (this.state.draggedElementY) this.positions[picture].y = this.state.draggedElementY - 25;
+    if (this.state.draggedElementX) this.positions[picture].x = this.state.draggedElementX - this.localX;
+    if (this.state.draggedElementY) this.positions[picture].y = this.state.draggedElementY - this.localY;
     this.setState({ draggedElementX: null, draggedElementY: null });
-    this.print();
-  };
-
-  print = () => {
-    console.log(this.state, this.isDragging);
+    this.localX = null;
+    this.localY = null;
   };
 }

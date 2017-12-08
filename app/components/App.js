@@ -116,9 +116,9 @@ export default class App extends Component {
           <_Link to="/image">
             <_LinkSymbol className="fa fa-picture-o" aria-hidden="true" />
           </_Link>
-          {/* <_Link to="/freespace">
+          <_Link to="/freespace">
             <_LinkSymbol className="fa fa-th" aria-hidden="true" />
-          </_Link> */}
+          </_Link>
           <_Link to="/data">
             <_LinkSymbol className="fa fa-list" aria-hidden="true" />
           </_Link>
