@@ -105,10 +105,26 @@ const _LeftColumn = styled.div`
 const _ViewerInfo = styled.div`
   background-color: ${SECTION_BG};
   color: ${SECTION_FG};
+  display: flex;
   font-family: monospace;
-  padding: 5px;
-  text-align: center;
+  height: 30px;
+  padding: 0 5px;
   width: 100%;
+
+  i,
+  span {
+    line-height: 30px;
+  }
+`;
+
+const _ResetZoomLevel = styled.span`
+  background-color: ${SECTION_BG2};
+  padding: 0 5px;
+
+  &:hover {
+    background-color: ${SECTION_BG2_OVER};
+    transition: background-color 250ms ease;
+  }
 `;
 
 const _Hud = styled.div`
@@ -284,8 +300,10 @@ class Image extends PureComponent {
             {this.state.zoomLevel && (
               <_ViewerInfo>
                 <i className="fa fa-search fa" aria-hidden="true" />
-                &nbsp;
-                {`${(100 * this.state.zoomLevel).toFixed(2)}%`}
+                &nbsp;&nbsp;
+                <_ResetZoomLevel onClick={this.resetZoomLevel}>1:1</_ResetZoomLevel>
+                &nbsp;&nbsp;
+                <span>{`${(100 * this.state.zoomLevel).toFixed(2)}%`}</span>
               </_ViewerInfo>
             )}
             {this.state.hudContent && <_Hud>{this.state.hudContent}</_Hud>}
@@ -414,6 +432,10 @@ class Image extends PureComponent {
   }
 
   // GESTURE HANDLERS
+
+  resetZoomLevel = () => {
+    this.Viewer.setValue({ ...this.Viewer.getValue(), a: 1.0, d: 1.0 });
+  };
 
   onChangeValue = e => {
     this.setState({ zoomLevel: e.d });
