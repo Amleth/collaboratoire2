@@ -290,14 +290,14 @@ class Image extends PureComponent {
             )}
             {this.state.hudContent && <_Hud>{this.state.hudContent}</_Hud>}
             <Inspector
-              annotationsMeasuresLinear={this.props.annotationsMeasuresLinear[this.state.currentPicture.id]}
-              annotationsPointsOfInterest={this.props.annotationsPointsOfInterest[this.state.currentPicture.id]}
-              annotationsRectangular={this.props.annotationsRectangular[this.state.currentPicture.id]}
+              annotationsMeasuresLinear={this.props.annotationsMeasuresLinear[this.state.currentPicture.sha1]}
+              annotationsPointsOfInterest={this.props.annotationsPointsOfInterest[this.state.currentPicture.sha1]}
+              annotationsRectangular={this.props.annotationsRectangular[this.state.currentPicture.sha1]}
               deleteAnnotationMeasureLinear={this.props.deleteAnnotationMeasureLinear}
               deleteAnnotationPointOfInterest={this.props.deleteAnnotationPointOfInterest}
               deleteAnnotationRectangular={this.props.deleteAnnotationRectangular}
               picture={this.state.currentPicture}
-              tags={this.props.tagsByPicture[this.state.currentPicture.id]}
+              tags={this.props.tagsByPicture[this.state.currentPicture.sha1]}
             />
           </_LeftColumn>
           <div style={{ flex: '1 1 auto' }}>
@@ -331,8 +331,8 @@ class Image extends PureComponent {
                         height={this.state.pendingAnnotationRectangleHeight}
                         width={this.state.pendingAnnotationRectangleWidth}
                       />
-                      {this.props.annotationsMeasuresLinear[this.state.currentPicture.id] &&
-                        this.props.annotationsMeasuresLinear[this.state.currentPicture.id].map(_ => {
+                      {this.props.annotationsMeasuresLinear[this.state.currentPicture.sha1] &&
+                        this.props.annotationsMeasuresLinear[this.state.currentPicture.sha1].map(_ => {
                           const FOCUSED =
                             this.props.focusedAnnotation && this.props.focusedAnnotation.annotationId === _.id;
                           return (
@@ -347,8 +347,8 @@ class Image extends PureComponent {
                             />
                           );
                         })}
-                      {this.props.annotationsPointsOfInterest[this.state.currentPicture.id] &&
-                        this.props.annotationsPointsOfInterest[this.state.currentPicture.id].map(_ => {
+                      {this.props.annotationsPointsOfInterest[this.state.currentPicture.sha1] &&
+                        this.props.annotationsPointsOfInterest[this.state.currentPicture.sha1].map(_ => {
                           const FOCUSED =
                             this.props.focusedAnnotation && this.props.focusedAnnotation.annotationId === _.id;
                           return (
@@ -376,8 +376,8 @@ class Image extends PureComponent {
                             </g>
                           );
                         })}
-                      {this.props.annotationsRectangular[this.state.currentPicture.id] &&
-                        this.props.annotationsRectangular[this.state.currentPicture.id].map(_ => {
+                      {this.props.annotationsRectangular[this.state.currentPicture.sha1] &&
+                        this.props.annotationsRectangular[this.state.currentPicture.sha1id].map(_ => {
                           const FOCUSED =
                             this.props.focusedAnnotation && this.props.focusedAnnotation.annotationId === _.id;
                           return (
@@ -541,7 +541,7 @@ class Image extends PureComponent {
     );
     mm = isNaN(mm) || Infinity === mm ? null : mm;
     this.props.createAnnotationMeasureLinear(
-      this.state.currentPicture.id,
+      this.state.currentPicture.sha1,
       x1,
       y1,
       secondClickedPointX,
@@ -551,7 +551,7 @@ class Image extends PureComponent {
   }
 
   makeAnnotationPointOfInterest(x, y) {
-    this.props.createAnnotationPointOfInterest(this.state.currentPicture.id, x, y);
+    this.props.createAnnotationPointOfInterest(this.state.currentPicture.sha1, x, y);
   }
 
   completeAnnotationRectangular(secondClickedPointX, secondClickedPointY) {
@@ -559,7 +559,7 @@ class Image extends PureComponent {
     const width = secondClickedPointX - x;
     const height = secondClickedPointY - y;
     annotationRectangleFirstClickedPoint = null;
-    this.props.createAnnotationRectangular(this.state.currentPicture.id, x, y, width, height);
+    this.props.createAnnotationRectangular(this.state.currentPicture.sha1, x, y, width, height);
   }
 }
 

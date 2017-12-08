@@ -270,9 +270,9 @@ export default class extends Component {
         cancel={() => this.setState({ editedAnnotation: null })}
         save={(title, targetType, text) => {
           this.props.editAnnotation(
-            this.props.picture.id,
+            this.props.picture.sha1,
             this.state.editedAnnotation.annotationType,
-            this.state.editedAnnotation.id,
+            this.state.editedAnnotation.sha1,
             title,
             targetType,
             text
@@ -298,12 +298,12 @@ export default class extends Component {
             <_Tags>
               {this.props.tags &&
                 this.props.tags.map(_ => (
-                  <_Tag key={this.props.picture.id + ':' + _}>
+                  <_Tag key={this.props.picture.sha1 + ':' + _}>
                     {_}&nbsp;<_TagIcon
                       className="fa fa-trash fa"
                       aria-hidden="true"
                       onClick={e => {
-                        this.props.untagPicture(this.props.picture.id, _);
+                        this.props.untagPicture(this.props.picture.sha1, _);
                       }}
                     />
                   </_Tag>
@@ -476,7 +476,7 @@ export default class extends Component {
     return (
       <_Annotation
         key={key}
-        onMouseOver={e => this.props.focusAnnotation(annotation.id, annotation.type, this.props.picture.id)}
+        onMouseOver={e => this.props.focusAnnotation(annotation.id, annotation.type, this.props.picture.sha1)}
       >
         <_AnnotationProperty>
           {this.props.editAnnotation && (
@@ -497,7 +497,7 @@ export default class extends Component {
             <_AnnotationButton
               className="fa fa-trash-o "
               aria-hidden="true"
-              onClick={e => deleteCallback(this.props.picture.id, annotation.id)}
+              onClick={e => deleteCallback(this.props.picture.sha1, annotation.id)}
             />
           )}
         </_AnnotationDate>

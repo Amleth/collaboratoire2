@@ -23,6 +23,7 @@ import { getMetadata } from './system/erecolnat-metadata';
 import './app.global.css';
 import 'react-virtualized/styles.css';
 
+export let store;
 const chance = new Chance();
 const start = new Date().getTime();
 
@@ -48,14 +49,14 @@ const go = picturesArray => {
   // Restructure pictures data
   const picturesObject = {};
   for (const p of picturesArray) {
-    picturesObject[p.id] = p;
+    picturesObject[p.sha1] = p;
   }
 
   // Init Redux store
   const initialState = createInitialState();
   initialState.app.pictures = picturesObject;
   initialState.app.pictures_selection = Object.keys(picturesObject);
-  const store = configureStore(initialState).store;
+  store = configureStore(initialState).store;
 
   // add erecolnat metadata
   for (const p in store.getState().app.pictures) {

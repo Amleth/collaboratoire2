@@ -1,4 +1,3 @@
-// @flow
 import { app, Menu, shell, BrowserWindow } from 'electron';
 
 export default class MenuBuilder {
@@ -108,7 +107,7 @@ export default class MenuBuilder {
       : subMenuViewProd;
 
     return [
-      subMenuAbout,
+      // subMenuAbout,
       // subMenuEdit,
       // subMenuView,
       // subMenuWindow,

@@ -231,7 +231,7 @@ export default class extends PureComponent {
             this.props.selectedTags,
             this.props.tagsSelectionMode
           ).map(_ => this.props.allPictures[_]);
-    this.props.setPicturesSelection(pictures.map(_ => _.id));
+    this.props.setPicturesSelection(pictures.map(_ => _.sha1));
 
     let key = 0;
 
@@ -303,7 +303,7 @@ export default class extends PureComponent {
                     label="File"
                     width={0.6 * width}
                     cellRenderer={({ cellData, rowData }) => {
-                      const selected = this.state.currentPicture.id === rowData.id;
+                      const selected = this.state.currentPicture.sha1 === rowData.sha1;
                       return (
                         <span>
                           <_FileIcon
@@ -320,11 +320,11 @@ export default class extends PureComponent {
                             }}
                             onDrop={e => {
                               e.preventDefault();
-                              this.props.tagPicture(rowData.id, e.dataTransfer.getData('tagName'));
+                              this.props.tagPicture(rowData.sha1, e.dataTransfer.getData('tagName'));
                             }}
                             onMouseOver={e => this.setState({ currentPicture: rowData })}
                             onDoubleClick={e => {
-                              this.props.setPictureInSelection(rowData.id);
+                              this.props.setPictureInSelection(rowData.sha1);
                               this.props.goToImage();
                             }}
                           >
@@ -350,7 +350,7 @@ export default class extends PureComponent {
                   <Column dataKey="height" label="Height" width={0.1 * width} key={key++} />
                   <Column dataKey="dpix" label="DPI" width={0.1 * width} key={key++} />
                   <Column
-                    dataKey="id"
+                    dataKey="sha1"
                     disableSort={true}
                     label="Tags"
                     width={0.1 * width}
@@ -369,7 +369,7 @@ export default class extends PureComponent {
             }}
             onDrop={e => {
               e.preventDefault();
-              this.props.tagPicture(this.state.currentPicture.id, e.dataTransfer.getData('tagName'));
+              this.props.tagPicture(this.state.currentPicture.sha1, e.dataTransfer.getData('tagName'));
             }}
           >
             <img
@@ -377,11 +377,11 @@ export default class extends PureComponent {
               width={INSPECTOR_WIDTH - 2 * INSPECTOR_MARGIN}
             />
             <Inspector
-              annotationsMeasuresLinear={this.props.annotationsMeasuresLinear[this.state.currentPicture.id]}
-              annotationsRectangular={this.props.annotationsRectangular[this.state.currentPicture.id]}
-              annotationsPointsOfInterest={this.props.annotationsPointsOfInterest[this.state.currentPicture.id]}
+              annotationsMeasuresLinear={this.props.annotationsMeasuresLinear[this.state.currentPicture.sha1]}
+              annotationsRectangular={this.props.annotationsRectangular[this.state.currentPicture.sha1]}
+              annotationsPointsOfInterest={this.props.annotationsPointsOfInterest[this.state.currentPicture.sha1]}
               picture={this.state.currentPicture}
-              tags={this.props.tagsByPicture[this.state.currentPicture.id]}
+              tags={this.props.tagsByPicture[this.state.currentPicture.sha1]}
             />
           </_Panel>
         </_Pictures>

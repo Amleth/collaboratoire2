@@ -75,7 +75,6 @@ export const initPicturesLibrary = async (cache_file, thumbnails_dir, pictures_d
         files: [file.path], // an array of paths, because maybe other files will have the same SHA1, and thus the same metadata
         file: file.path, // For now, we alse store the first encountered file for the current SHA1
         file_basename: path.basename(file.path),
-        id: chance.guid(),
         width,
         height,
         sha1,
@@ -123,7 +122,7 @@ export const initPicturesLibrary = async (cache_file, thumbnails_dir, pictures_d
   await sleep(666);
 
   for (const i of pictures_cache_array) {
-    const thumbnail_path = path.join(thumbnails_dir, `${i.id}.jpg`);
+    const thumbnail_path = path.join(thumbnails_dir, `${i.sha1}.jpg`);
 
     const exists = await fs.pathExists(thumbnail_path);
     if (exists) {
@@ -140,7 +139,7 @@ export const initPicturesLibrary = async (cache_file, thumbnails_dir, pictures_d
   }
 
   pictures_cache_array.forEach((e, i, a) => {
-    a[i].thumbnail = path.join(thumbnails_dir, `${e.id}.jpg`);
+    a[i].thumbnail = path.join(thumbnails_dir, `${e.sha1}.jpg`);
   });
 
   ee.emit(EVENT_THUMBNAILS_CREATION_COMPLETE);

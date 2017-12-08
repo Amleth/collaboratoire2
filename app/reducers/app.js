@@ -53,6 +53,15 @@ export const createInitialState = () => ({
   }
 });
 
+export const userDataBranches = () => ({
+  annotations_measures_linear: null,
+  annotations_points_of_interest: null,
+  annotations_rectangular: null,
+  pictures_by_tag: null,
+  tags_by_picture: null,
+  tags: null
+});
+
 export default (state = {}, action) => {
   const NOW_DATE = new Date();
   const NOW_TIMESTAMP = NOW_DATE.getTime();
