@@ -16,6 +16,7 @@ import {
   DOC_BUTTON_FG,
   DOC_FG,
   DOC_ICON,
+  DOC_ICON_HOVER,
   DOC_LINK_BG,
   DOC_LINK_FG,
   MAIN_NAV_BG,
@@ -26,10 +27,19 @@ import {
   PROGRESS_FG1,
   PROGRESS_FG2,
   PROGRESS_SEP,
-  RECOLNAT_CAMILLE_DEGARDIN
+  RECOLNAT_CAMILLE_DEGARDIN,
+  DOC_TITLE_ICON
 } from './constants';
 import { USER_DATA_DIR } from '../index';
-import { addPicturesDirectory, getPicturesDirectories, removePicturesDirectory, toConfigFile } from '../config';
+import {
+  addPicturesDirectory,
+  disableDirectory,
+  enableDirectory,
+  getAllPicturesDirectories,
+  getEnabledPicturesDirectories,
+  removePicturesDirectory,
+  toConfigFile
+} from '../config';
 import { formatDate } from '../utils/js';
 import { format } from 'url';
 
@@ -53,6 +63,10 @@ const _Root = styled.div`
 
   .icon {
     color: ${DOC_ICON};
+
+    &:hover {
+      color: ${DOC_ICON_HOVER};
+    }
   }
 `;
 
@@ -95,6 +109,14 @@ const _ImportSection = styled.div`
 
       &:hover {
         text-decoration: underline;
+      }
+    }
+
+    .icon {
+      color: ${DOC_TITLE_ICON};
+
+      &: hover {
+        color: ${DOC_TITLE_ICON};
       }
     }
   }
@@ -455,21 +477,45 @@ export default class extends Component {
               <i className="fa fa-desktop fa-fw icon" />&nbsp;On this computer
             </h2>
             <ul>
-              {getPicturesDirectories().map(_ => (
-                <li key={_}>
-                  <span className="link" onClick={e => shell.showItemInFolder(_)}>
-                    {_}
-                  </span>
-                  &nbsp;
-                  <i
-                    className="fa fa-minus-square fa-fw icon"
-                    onClick={e => {
-                      removePicturesDirectory(_);
-                      toConfigFile();
-                    }}
-                  />
-                </li>
-              ))}
+              {getAllPicturesDirectories().map(_ => {
+                const enabled = getEnabledPicturesDirectories().indexOf(_) !== -1;
+                return (
+                  <li key={_}>
+                    <span className="link" onClick={e => shell.showItemInFolder(_)}>
+                      {_}
+                    </span>
+                    &nbsp;
+                    <i
+                      className="fa fa-trash fa-fw icon"
+                      onClick={e => {
+                        removePicturesDirectory(_);
+                        toConfigFile();
+                      }}
+                    />
+                    {enabled ? (
+                      <i
+                        className="fa fa-eye fa-fw icon"
+                        onClick={e => {
+                          console.log('Please disable', _);
+                          disableDirectory(_);
+                          this.forceUpdate();
+                          toConfigFile();
+                        }}
+                      />
+                    ) : (
+                      <i
+                        className="fa fa-eye-slash fa-fw icon"
+                        onClick={e => {
+                          console.log('Please enable', _);
+                          enableDirectory(_);
+                          this.forceUpdate();
+                          toConfigFile();
+                        }}
+                      />
+                    )}
+                  </li>
+                );
+              })}
             </ul>
             <h3>
               <_FileOpenLink

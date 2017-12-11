@@ -12,7 +12,7 @@ import rimraf from 'rimraf';
 
 import { RECOLNAT_CAMILLE_DEGARDIN } from './components/constants';
 import Loading from './components/Loading';
-import { fromConfigFile, getPicturesDirectories, setConfigFilePath } from './config';
+import { fromConfigFile, getAllPicturesDirectories, getEnabledPicturesDirectories, setConfigFilePath } from './config';
 import { importExploreJson } from './actions/app';
 import Root from './containers/Root';
 import { createInitialState } from './reducers/app';
@@ -92,9 +92,12 @@ const go = picturesArray => {
 };
 
 // Wait for library init
-if (getPicturesDirectories().length > 0) {
-  render(<Loading directories={getPicturesDirectories()} loadingEventEmitter={ee} />, document.getElementById('root'));
-  initPicturesLibrary(CACHE_FILE, THUMBNAILS_DIR, getPicturesDirectories());
+if (getAllPicturesDirectories().length > 0) {
+  render(
+    <Loading directories={getAllPicturesDirectories()} loadingEventEmitter={ee} />,
+    document.getElementById('root')
+  );
+  initPicturesLibrary(CACHE_FILE, THUMBNAILS_DIR, getEnabledPicturesDirectories());
   ee.on(EVENT_COMPLETE, picturesArray => {
     go(picturesArray);
   });

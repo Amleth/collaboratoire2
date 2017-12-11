@@ -170,6 +170,10 @@ const sizeOf = _ => {
 
 const collectPictureFilesInDirectories = directories => {
   return new Promise((resolve, reject) => {
+    if (directories.length === 0) {
+      resolve([]);
+    }
+
     let files = [];
 
     const start = new Date().getTime();
