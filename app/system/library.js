@@ -38,9 +38,11 @@ export const initPicturesLibrary = async (cache_file, thumbnails_dir, pictures_d
     pictures_cache = JSON.parse(fs.readFileSync(cache_file));
   }
 
-  // We want to clean the cache from files that no longer exist on user's hard
-  // drive. Consequently, we keep track of files SHA1: each encountered file
-  // will leave this registry.
+  // We want to know if a file is in a directory which does not exist anymore
+  // on user hard drive, or is in a disabled pictures directory.
+  // Such a file must not be displayed in the application, but its SHA1 must
+  // stay in the file cache in case it become available again.
+  // Let's keep track of such SHA1.
   const unusedSha1 = {};
   for (const sha1 in pictures_cache) {
     unusedSha1[sha1] = null;
@@ -108,10 +110,11 @@ export const initPicturesLibrary = async (cache_file, thumbnails_dir, pictures_d
   // New cache creation
   //
 
-  for (const sha1 in unusedSha1) {
-    delete pictures_cache[sha1];
-  }
+  // As explained before, the file cache & the app cache differ because non
+  // existing or disable files must not be in the app cache but stay in the
+  // file cache. The file cache is written before unused SHA1 are deleted.
   fs.writeFileSync(cache_file, JSON.stringify(pictures_cache));
+  for (const sha1 in unusedSha1) delete pictures_cache[sha1];
   const pictures_cache_array = Object.values(pictures_cache);
   ee.emit(EVENT_CACHE_BUILDING_COMPLETE, pictures_cache_array);
 
