@@ -77,4 +77,8 @@ app.on('ready', async () => {
   // const menuBuilder = new MenuBuilder(mainWindow);
   // menuBuilder.buildMenu();
   // mainWindow.setMenu(null);
+
+  if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
+    mainWindow.toggleDevTools();
+  }
 });
