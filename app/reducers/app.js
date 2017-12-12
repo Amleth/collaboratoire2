@@ -40,6 +40,7 @@ import {
 
 const chance = new Chance();
 
+// The 'shape' of the state is defined here
 export const createInitialState = () => ({
   app: {
     annotations_measures_linear: {},
