@@ -9,6 +9,7 @@ import {
   EDIT_ANNOTATION,
   FIRST_PICTURE_IN_SELECTION,
   LAST_PICTURE_IN_SELECTION,
+  MOVE_PICTURE_IN_PICTURES_SELECTION,
   NEXT_PICTURE_IN_SELECTION,
   NEXT_TEN_PICTURE_IN_SELECTION,
   PREVIOUS_PICTURE_IN_SELECTION,
@@ -27,6 +28,7 @@ const chance = new Chance();
 //
 
 test('I should navigate in pictures selection', () => {
+  // Init a pictures selection
   let state = createInitialState().app;
   state.pictures_selection = [];
   for (let i = 0; i < 69; i++) state.pictures_selection.push(chance.guid());
@@ -34,54 +36,89 @@ test('I should navigate in pictures selection', () => {
   // +1
 
   state.current_picture_index_in_selection = 42;
-  state = r(state, { type: NEXT_PICTURE_IN_SELECTION });
+  state = r(state, {
+    type: NEXT_PICTURE_IN_SELECTION
+  });
   expect(state.current_picture_index_in_selection).toBe(43);
 
   state.current_picture_index_in_selection = 68;
-  state = r(state, { type: NEXT_PICTURE_IN_SELECTION });
+  state = r(state, {
+    type: NEXT_PICTURE_IN_SELECTION
+  });
   expect(state.current_picture_index_in_selection).toBe(0);
 
   // +10
 
   state.current_picture_index_in_selection = 42;
-  state = r(state, { type: NEXT_TEN_PICTURE_IN_SELECTION });
+  state = r(state, {
+    type: NEXT_TEN_PICTURE_IN_SELECTION
+  });
   expect(state.current_picture_index_in_selection).toBe(52);
 
   state.current_picture_index_in_selection = 65;
-  state = r(state, { type: NEXT_TEN_PICTURE_IN_SELECTION });
+  state = r(state, {
+    type: NEXT_TEN_PICTURE_IN_SELECTION
+  });
   expect(state.current_picture_index_in_selection).toBe(6);
 
   // last
 
   state.current_picture_index_in_selection = 42;
-  state = r(state, { type: LAST_PICTURE_IN_SELECTION });
+  state = r(state, {
+    type: LAST_PICTURE_IN_SELECTION
+  });
   expect(state.current_picture_index_in_selection).toBe(68);
 
   // -1
 
   state.current_picture_index_in_selection = 42;
-  state = r(state, { type: PREVIOUS_PICTURE_IN_SELECTION });
+  state = r(state, {
+    type: PREVIOUS_PICTURE_IN_SELECTION
+  });
   expect(state.current_picture_index_in_selection).toBe(41);
 
   state.current_picture_index_in_selection = 0;
-  state = r(state, { type: PREVIOUS_PICTURE_IN_SELECTION });
+  state = r(state, {
+    type: PREVIOUS_PICTURE_IN_SELECTION
+  });
   expect(state.current_picture_index_in_selection).toBe(68);
 
   // -10
 
   state.current_picture_index_in_selection = 42;
-  state = r(state, { type: PREVIOUS_TEN_PICTURE_IN_SELECTION });
+  state = r(state, {
+    type: PREVIOUS_TEN_PICTURE_IN_SELECTION
+  });
   expect(state.current_picture_index_in_selection).toBe(32);
 
   state.current_picture_index_in_selection = 3;
-  state = r(state, { type: PREVIOUS_TEN_PICTURE_IN_SELECTION });
+  state = r(state, {
+    type: PREVIOUS_TEN_PICTURE_IN_SELECTION
+  });
   expect(state.current_picture_index_in_selection).toBe(62);
 
   // first
 
   state.current_picture_index_in_selection = 42;
-  state = r(state, { type: FIRST_PICTURE_IN_SELECTION });
+  state = r(state, {
+    type: FIRST_PICTURE_IN_SELECTION
+  });
   expect(state.current_picture_index_in_selection).toBe(0);
+});
+
+test('It should move a picture in pictures selection', () => {
+  // Init a pictures selection
+  let state = createInitialState().app;
+  state.pictures_selection = [];
+  for (let i = 0; i < 5; i++) state.pictures_selection.push(chance.guid());
+  const copy = JSON.parse(JSON.stringify(state.pictures_selection));
+
+  state = r(state, { type: MOVE_PICTURE_IN_PICTURES_SELECTION, indexFrom: 4, indexTo: 2 });
+  expect(state.pictures_selection[0]).toBe(copy[0]);
+  expect(state.pictures_selection[1]).toBe(copy[1]);
+  expect(state.pictures_selection[2]).toBe(copy[4]);
+  expect(state.pictures_selection[3]).toBe(copy[2]);
+  expect(state.pictures_selection[4]).toBe(copy[3]);
 });
 
 //

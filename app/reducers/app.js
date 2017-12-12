@@ -14,6 +14,7 @@ import {
   FIRST_PICTURE_IN_SELECTION,
   FOCUS_ANNOTATION,
   LAST_PICTURE_IN_SELECTION,
+  MOVE_PICTURE_IN_PICTURES_SELECTION,
   NEXT_PICTURE_IN_SELECTION,
   NEXT_TEN_PICTURE_IN_SELECTION,
   PREVIOUS_PICTURE_IN_SELECTION,
@@ -260,6 +261,22 @@ export default (state = {}, action) => {
       break;
     case LAST_PICTURE_IN_SELECTION:
       return { ...state, current_picture_index_in_selection: state.pictures_selection.length - 1 };
+      break;
+    case MOVE_PICTURE_IN_PICTURES_SELECTION:
+      {
+        if (action.indexFrom === action.indexTo) return state;
+        if (action.indexFrom < 0) return state;
+        if (action.indexTo < 0) return state;
+        if (action.indexFrom >= state.pictures_selection.length) return state;
+        if (action.indexTo >= state.pictures_selection.length) return state;
+
+        const pictures_selection = state.pictures_selection;
+        const element = pictures_selection[action.indexFrom];
+        pictures_selection.splice(action.indexFrom, 1);
+        pictures_selection.splice(action.indexTo, 0, element);
+
+        return { ...state, pictures_selection };
+      }
       break;
     case NEXT_PICTURE_IN_SELECTION:
       {

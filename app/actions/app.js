@@ -14,6 +14,7 @@ export const EDIT_ANNOTATION = 'EDIT_ANNOTATION';
 export const FIRST_PICTURE_IN_SELECTION = 'FIRST_PICTURE_IN_SELECTION';
 export const FOCUS_ANNOTATION = 'FOCUS_ANNOTATION';
 export const LAST_PICTURE_IN_SELECTION = 'LAST_PICTURE_IN_SELECTION';
+export const MOVE_PICTURE_IN_PICTURES_SELECTION = 'MOVE_PICTURE_IN_PICTURES_SELECTION';
 export const NEXT_PICTURE_IN_SELECTION = 'NEXT_PICTURE_IN_SELECTION';
 export const NEXT_TEN_PICTURE_IN_SELECTION = 'NEXT_TEN_PICTURE_IN_SELECTION';
 export const PREVIOUS_PICTURE_IN_SELECTION = 'PREVIOUS_PICTURE_IN_SELECTION';
@@ -111,6 +112,12 @@ export const focusAnnotation = (annotationId, annotationType, pictureId) => ({
 
 export const lastPictureInSelection = () => ({
   type: LAST_PICTURE_IN_SELECTION
+});
+
+export const movePictureInPicturesSelection = (indexFrom, indexTo) => ({
+  type: MOVE_PICTURE_IN_PICTURES_SELECTION,
+  indexFrom,
+  indexTo
 });
 
 export const nextPictureInSelection = () => ({
