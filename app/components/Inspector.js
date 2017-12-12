@@ -113,7 +113,7 @@ const _LinkValue = styled.div`
   }
 `;
 
-const _TagsTitle = styled.div`
+const _SectionTitle = styled.div`
   color: ${INSPECTOR_TEXT};
   font-size: 150%;
   margin: ${MARGIN}px 0;
@@ -294,7 +294,7 @@ export default class extends Component {
         </_Tabs>
         {this.state.selectedTab === TAB_METADATA && (
           <_MetadataSubpanel>
-            <_TagsTitle>TAGS</_TagsTitle>
+            <_SectionTitle>TAGS</_SectionTitle>
             <_Tags>
               {this.props.tags &&
                 this.props.tags.map(_ => (
@@ -309,6 +309,7 @@ export default class extends Component {
                   </_Tag>
                 ))}
             </_Tags>
+            <_SectionTitle>METADATA</_SectionTitle>
             <_MetadataList>
               <_Metadata>
                 <_MetadataTitle>File name</_MetadataTitle>
