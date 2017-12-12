@@ -288,14 +288,9 @@ export default (state = {}, action) => {
       break;
     case PREVIOUS_TEN_PICTURE_IN_SELECTION:
       {
-        let _ = (state.current_picture_index_in_selection - 10) % state.pictures_selection.length;
-        while (_ < 1) {
-          _ += 49;
-        }
-        return {
-          ...state,
-          current_picture_index_in_selection: _
-        };
+        let _ = state.current_picture_index_in_selection - 10;
+        if (_ < 0) _ += state.pictures_selection.length;
+        return { ...state, current_picture_index_in_selection: _ };
       }
       break;
     case SELECT_TAG:

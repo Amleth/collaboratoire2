@@ -7,6 +7,12 @@ import {
   DELETE_ANNOTATION_MEASURE_LINEAR,
   DELETE_TAG,
   EDIT_ANNOTATION,
+  FIRST_PICTURE_IN_SELECTION,
+  LAST_PICTURE_IN_SELECTION,
+  NEXT_PICTURE_IN_SELECTION,
+  NEXT_TEN_PICTURE_IN_SELECTION,
+  PREVIOUS_PICTURE_IN_SELECTION,
+  PREVIOUS_TEN_PICTURE_IN_SELECTION,
   SELECT_TAG,
   TAG_PICTURE,
   UNTAG_PICTURE,
@@ -17,15 +23,76 @@ import { ANNOTATION_MEASURE_LINEAR } from '../../app/data/constants';
 const chance = new Chance();
 
 //
+// PICTURES NAVIGATION
+//
+
+test('I should navigate in pictures selection', () => {
+  let state = createInitialState().app;
+  state.pictures_selection = [];
+  for (let i = 0; i < 69; i++) state.pictures_selection.push(chance.guid());
+
+  // +1
+
+  state.current_picture_index_in_selection = 42;
+  state = r(state, { type: NEXT_PICTURE_IN_SELECTION });
+  expect(state.current_picture_index_in_selection).toBe(43);
+
+  state.current_picture_index_in_selection = 68;
+  state = r(state, { type: NEXT_PICTURE_IN_SELECTION });
+  expect(state.current_picture_index_in_selection).toBe(0);
+
+  // +10
+
+  state.current_picture_index_in_selection = 42;
+  state = r(state, { type: NEXT_TEN_PICTURE_IN_SELECTION });
+  expect(state.current_picture_index_in_selection).toBe(52);
+
+  state.current_picture_index_in_selection = 65;
+  state = r(state, { type: NEXT_TEN_PICTURE_IN_SELECTION });
+  expect(state.current_picture_index_in_selection).toBe(6);
+
+  // last
+
+  state.current_picture_index_in_selection = 42;
+  state = r(state, { type: LAST_PICTURE_IN_SELECTION });
+  expect(state.current_picture_index_in_selection).toBe(68);
+
+  // -1
+
+  state.current_picture_index_in_selection = 42;
+  state = r(state, { type: PREVIOUS_PICTURE_IN_SELECTION });
+  expect(state.current_picture_index_in_selection).toBe(41);
+
+  state.current_picture_index_in_selection = 0;
+  state = r(state, { type: PREVIOUS_PICTURE_IN_SELECTION });
+  expect(state.current_picture_index_in_selection).toBe(68);
+
+  // -10
+
+  state.current_picture_index_in_selection = 42;
+  state = r(state, { type: PREVIOUS_TEN_PICTURE_IN_SELECTION });
+  expect(state.current_picture_index_in_selection).toBe(32);
+
+  state.current_picture_index_in_selection = 3;
+  state = r(state, { type: PREVIOUS_TEN_PICTURE_IN_SELECTION });
+  expect(state.current_picture_index_in_selection).toBe(62);
+
+  // first
+
+  state.current_picture_index_in_selection = 42;
+  state = r(state, { type: FIRST_PICTURE_IN_SELECTION });
+  expect(state.current_picture_index_in_selection).toBe(0);
+});
+
+//
 // TAGS (ON PICTURES)
 //
 
 test('It should tag then untag a picture', () => {
-  const initialState = createInitialState().app;
   const pictureId = chance.guid();
   const tagName = chance.string();
 
-  let state = initialState;
+  let state = createInitialState().app;
   state = r(state, { type: TAG_PICTURE, pictureId: pictureId, tagName: tagName });
   expect(state.tags_by_picture).toEqual({ [pictureId]: [tagName] });
   expect(state.pictures_by_tag).toEqual({ [tagName]: [pictureId] });
