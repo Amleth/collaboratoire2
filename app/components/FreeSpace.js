@@ -54,14 +54,6 @@ export default class extends Component {
     if (process.env.NODE_ENV !== 'development' && this.props.picturesSelection.length > PICTURES_NUMBER_LIMIT)
       return <_Message>No more than {PICTURES_NUMBER_LIMIT} pictures may be displayed</_Message>;
 
-    // We need selectedElement to be at the end of this.props.picturesSelection,
-    // so that it will be rendered on top of other elements
-    const picturesSelection = this.props.picturesSelection;
-    if (this.selectedElement) {
-      picturesSelection.splice(this.props.picturesSelection.indexOf(this.selectedElement), 1);
-      picturesSelection.push(this.selectedElement);
-    }
-
     return (
       <_Root>
         <div style={{ flex: '1 1 auto' }}>
@@ -76,9 +68,10 @@ export default class extends Component {
                 onMouseMove={this.handleMouseMove}
               >
                 <svg height={10000} width={10000}>
-                  {picturesSelection.map(p => {
+                  {this.props.picturesSelection.map(p => {
                     return (
                       <image
+                        id={p}
                         onMouseDown={e => this.handleMouseDownOnElement(e, p)}
                         onMouseUp={e => this.handleMouseUpOnElement(e, p)}
                         height={256}
@@ -100,6 +93,7 @@ export default class extends Component {
                       />
                     );
                   })}
+                  <use xlinkHref={`#${this.selectedElement}`} />
                 </svg>
               </ReactSVGPanZoom>
             )}
