@@ -1,4 +1,4 @@
-import { shell } from 'electron';
+import { remote, shell } from 'electron';
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import styled, { css } from 'styled-components';
@@ -208,6 +208,7 @@ const _AnnotationsListStats = styled.div`
 `;
 const _AnnotationButton = styled.i`
   color: ${INSPECTOR_ANNOTATION_TEXT2};
+  font-style: normal;
 
   &:hover {
     color: ${INSPECTOR_TAB_FG_OVER};
@@ -272,7 +273,7 @@ export default class extends Component {
           this.props.editAnnotation(
             this.props.picture.sha1,
             this.state.editedAnnotation.annotationType,
-            this.state.editedAnnotation.sha1,
+            this.state.editedAnnotation.id,
             title,
             targetType,
             text
