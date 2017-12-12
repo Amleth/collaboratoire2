@@ -89,11 +89,10 @@ export default class extends Component {
                             ? this.state.draggedElementY - this.localY
                             : this.positions[p].y
                         }
-                        id={p}
                       />
                     );
                   })}
-                  <use xlinkHref={`#${this.selectedElement}`} />
+                  {/* <use xlinkHref={`#${this.selectedElement}`} /> */}
                 </svg>
               </ReactSVGPanZoom>
             )}
