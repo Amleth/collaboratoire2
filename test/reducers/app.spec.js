@@ -5,37 +5,61 @@ import r, { createInitialState } from '../../app/reducers/app';
 import {
   CREATE_ANNOTATION_MEASURE_LINEAR,
   DELETE_ANNOTATION_MEASURE_LINEAR,
+  DELETE_TAG,
   EDIT_ANNOTATION,
+  SELECT_TAG,
   TAG_PICTURE,
-  UNTAG_PICTURE
+  UNTAG_PICTURE,
+  CREATE_TAG
 } from '../../app/actions/app';
 import { ANNOTATION_MEASURE_LINEAR } from '../../app/data/constants';
 
 const chance = new Chance();
+
+//
+// TAGS (ON PICTURES)
+//
 
 test('It should tag then untag a picture', () => {
   const initialState = createInitialState().app;
   const pictureId = chance.guid();
   const tagName = chance.string();
 
-  const newState = r(initialState, {
-    type: TAG_PICTURE,
-    pictureId: pictureId,
-    tagName: tagName
-  });
+  let state = initialState;
+  state = r(state, { type: TAG_PICTURE, pictureId: pictureId, tagName: tagName });
+  expect(state.tags_by_picture).toEqual({ [pictureId]: [tagName] });
+  expect(state.pictures_by_tag).toEqual({ [tagName]: [pictureId] });
 
-  expect(newState.tags_by_picture).toEqual({ [pictureId]: [tagName] });
-  expect(newState.pictures_by_tag).toEqual({ [tagName]: [pictureId] });
-
-  const newState2 = r(newState, {
-    type: UNTAG_PICTURE,
-    pictureId: pictureId,
-    tagName: tagName
-  });
-
-  expect(newState2.tags_by_picture).toEqual({ [pictureId]: [] });
-  expect(newState2.pictures_by_tag).toEqual({ [tagName]: [] });
+  state = r(state, { type: UNTAG_PICTURE, pictureId: pictureId, tagName: tagName });
+  expect(state.tags_by_picture).toEqual({ [pictureId]: [] });
+  expect(state.pictures_by_tag).toEqual({ [tagName]: [] });
 });
+
+test('It should delete a tag', () => {
+  const initialState = createInitialState().app;
+  const pictureId = chance.guid();
+  const tag1Name = chance.string();
+  const tag2Name = chance.string();
+
+  let state = initialState;
+  state = r(state, { type: CREATE_TAG, name: tag1Name });
+  state = r(state, { type: TAG_PICTURE, pictureId: pictureId, tagName: tag1Name });
+  state = r(state, { type: SELECT_TAG, name: tag1Name });
+  state = r(state, { type: CREATE_TAG, name: tag2Name });
+  state = r(state, { type: TAG_PICTURE, pictureId: pictureId, tagName: tag2Name });
+  state = r(state, { type: SELECT_TAG, name: tag2Name });
+  state = r(state, { type: DELETE_TAG, name: tag1Name });
+
+  expect(state.selected_tags).toEqual([tag2Name]);
+  expect(state.tags.length).toEqual(1);
+  expect(state.tags.filter(_ => _.name === tag2Name).length).toEqual(1);
+  expect(state.tags_by_picture).toEqual({ [pictureId]: [tag2Name] });
+  expect(state.pictures_by_tag).toEqual({ [tag2Name]: [pictureId] });
+});
+
+//
+// ANNOTATIONS
+//
 
 test('It should create two linear annotations and the delete the first one', () => {
   const initialState = createInitialState().app;

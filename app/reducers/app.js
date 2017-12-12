@@ -1,4 +1,5 @@
 import Chance from 'chance';
+import lodash from 'lodash';
 
 import {
   CREATE_ANNOTATION_MEASURE_LINEAR,
@@ -184,6 +185,36 @@ export default (state = {}, action) => {
           [action.pictureId]: state.annotations_rectangular[action.pictureId].filter(_ => _.id !== action.annotationId)
         }
       };
+      break;
+    case DELETE_TAG:
+      {
+        const new_tags_by_picture = {};
+        for (const p in state.tags_by_picture) {
+          const index = state.tags_by_picture[p].indexOf(action.name);
+          if (index === -1) {
+            new_tags_by_picture[p] = state.tags_by_picture[p];
+          } else {
+            if (state.tags_by_picture[p.length === 1]) {
+            } else {
+              new_tags_by_picture[p] = [
+                ...state.tags_by_picture[p].slice(0, index),
+                ...state.tags_by_picture[p].slice(index + 1)
+              ];
+            }
+          }
+        }
+        const index_in_selected_tags = state.selected_tags.indexOf(action.name);
+        return {
+          ...state,
+          pictures_by_tag: lodash.omit(state.pictures_by_tag, action.name),
+          selected_tags: [
+            ...state.selected_tags.slice(0, index_in_selected_tags),
+            ...state.selected_tags.slice(index_in_selected_tags + 1)
+          ],
+          tags: state.tags.filter(_ => _.name !== action.name),
+          tags_by_picture: new_tags_by_picture
+        };
+      }
       break;
     case EDIT_ANNOTATION:
       let branch;

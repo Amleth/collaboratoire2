@@ -1,4 +1,4 @@
-import { shell } from 'electron';
+import { remote, shell } from 'electron';
 import lodash from 'lodash';
 import path from 'path';
 import React, { PureComponent } from 'react';
@@ -19,7 +19,9 @@ import {
   TAG_BG,
   TAG_BG_OVER,
   TAG_FG,
-  TAG_FG_OVER
+  TAG_FG_OVER,
+  TAG_ICON_FG,
+  TAG_ICON_FG_OVER
 } from './constants';
 import { MARGIN as INSPECTOR_MARGIN, WIDTH as INSPECTOR_WIDTH } from './Inspector';
 import { findPictures } from '../business_logic/tags';
@@ -113,18 +115,33 @@ const _Tag = styled.div`
   color: ${TAG_FG};
   height: ${TAG_HEIGHT}px;
   margin: 2px;
-  padding: 2px;
 
-  ${props =>
-    props.selected &&
-    css`
+  > div {
+    border-radius: 2px;
+    display: inline-block;
+    height: ${TAG_HEIGHT}px;
+    padding: 2px;
+
+    ${props =>
+      props.selected &&
+      css`
+        background-color: ${TAG_BG_OVER};
+        color: ${TAG_FG_OVER};
+      `};
+
+    &:hover {
       background-color: ${TAG_BG_OVER};
       color: ${TAG_FG_OVER};
-    `};
+    }
+  }
 
-  &:hover {
-    background-color: ${TAG_BG_OVER};
-    color: ${TAG_FG_OVER};
+  > i {
+    color: ${TAG_ICON_FG};
+    padding: 0 5px;
+
+    &:hover {
+      color: ${TAG_ICON_FG_OVER};
+    }
   }
 `;
 
@@ -268,11 +285,24 @@ export default class extends PureComponent {
                   <_Tag
                     selected={selected}
                     key={`tag_${_.name}`}
-                    onClick={this.handleClickOnTag}
                     draggable="true"
                     onDragStart={e => e.dataTransfer.setData('tagName', _.name)}
                   >
-                    {_.name}
+                    <div onClick={this.handleClickOnTag}>{_.name}</div>
+                    <i
+                      className="fa fa-trash fa"
+                      aria-hidden="true"
+                      onClick={e => {
+                        const result = remote.dialog.showMessageBox({
+                          type: 'question',
+                          buttons: ['Yes', 'No'],
+                          message: `Tag: "${_.name}"`,
+                          cancelId: 1,
+                          detail: `Are you sure you want to delete it?`
+                        });
+                        if (result === 0) this.props.deleteTag(_.name);
+                      }}
+                    />
                   </_Tag>
                 );
               })}

@@ -3,6 +3,7 @@ import { push } from 'react-router-redux';
 
 import {
   createTag,
+  deleteTag,
   selectTag,
   setPictureInSelection,
   setPicturesSelection,
@@ -32,6 +33,9 @@ const mapDispatchToProps = dispatch => {
   return {
     createTag: name => {
       dispatch(createTag(name));
+    },
+    deleteTag: name => {
+      dispatch(deleteTag(name));
     },
     selectTag: name => {
       dispatch(selectTag(name));

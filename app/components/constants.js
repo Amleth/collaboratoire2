@@ -48,7 +48,8 @@ export const TABLE_DATA_FG_OVER = 'white';
 export const TAG_BG = FG1;
 export const TAG_BG_OVER = FG3;
 export const TAG_FG = BG1;
-export const TAG_FG_OVER = BG1;
+export const TAG_ICON_FG = BG2;
+export const TAG_ICON_FG_OVER = BG1;
 
 export const SELECTED = FG1;
 
