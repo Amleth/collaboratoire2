@@ -1,4 +1,4 @@
-import { addPicturesDirectory, get, getPicturesDirectories, removePicturesDirectory, set } from '../../app/config';
+import { addPicturesDirectory, get, getAllPicturesDirectories, removePicturesDirectory, set } from '../../app/config';
 
 const init = () => set({ pictures_directories: ['a'] });
 
@@ -10,12 +10,12 @@ test('Set then set', () => {
 test('Add pictures directory', () => {
   init();
   addPicturesDirectory('b');
-  expect(getPicturesDirectories()).toEqual(['a', 'b']);
+  expect(getAllPicturesDirectories()).toEqual(['a', 'b']);
 });
 
 test('Remove pictures directory', () => {
   init();
   addPicturesDirectory('b');
   removePicturesDirectory('a');
-  expect(getPicturesDirectories()).toEqual(['b']);
+  expect(getAllPicturesDirectories()).toEqual(['b']);
 });

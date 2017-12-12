@@ -20,7 +20,7 @@ export const fromConfigFile = () => {
 };
 
 export const addPicturesDirectory = _ => {
-  if (getPicturesDirectories().indexOf(_) !== -1) return;
+  if (getAllPicturesDirectories().indexOf(_) !== -1) return;
   if (!config.pictures_directories) config.pictures_directories = [];
   config.pictures_directories.push(_);
 };
@@ -70,7 +70,7 @@ export const getEnabledPicturesDirectories = () => {
 export const removePicturesDirectory = _ => {
   let index;
 
-  index = getPicturesDirectories().indexOf(_);
+  index = getAllPicturesDirectories().indexOf(_);
   if (index !== -1) {
     config.pictures_directories.splice(index, 1);
   }
