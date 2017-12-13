@@ -10,24 +10,43 @@ import {
   INSPECTOR_BORDER2,
   INSPECTOR_BUTTON_BG,
   INSPECTOR_INPUT_BG,
+  INSPECTOR_SECTION_TITLE_BUTTON,
+  INSPECTOR_SECTION_TITLE_BUTTON_OVER,
   INSPECTOR_TAB_BG,
   INSPECTOR_TAB_FG,
-  INSPECTOR_TEXT
+  INSPECTOR_TAB_FG_OVER,
+  INSPECTOR_TEXT,
+  TAG_BG,
+  TAG_BG_OVER,
+  TAG_FG,
+  TAG_FG_OVER,
+  TAG_HEIGHT,
+  TAG_ICON_FG,
+  TAG_ICON_FG_OVER
 } from './constants';
 import { ANNOTATION_MEASURE_LINEAR, ANNOTATION_POINT_OF_INTEREST, ANNOTATION_RECTANGULAR } from '../data/constants';
 
 const MARGIN = 10;
 const WIDTH = 250;
 const INPUT_HEIGHT = 25;
+const VIEW_ANNOTATION_EDITOR = 'VIEW_ANNOTATION_EDITOR';
+const VIEW_PICK_A_TAG = 'VIEW_PICK_A_TAG';
 
 // STYLED COMPONENTS
 
 const _Root = styled.div`
   background-color: ${INSPECTOR_TAB_BG};
-  color: purple;
   height: 100%;
   overflow: scroll;
   width: ${WIDTH}px;
+`;
+
+const _SectionTitle = styled.div`
+  color: ${INSPECTOR_TEXT};
+  font-size: 150%;
+  margin: ${MARGIN}px 0;
+  text-align: center;
+  width: 100%;
 `;
 
 const _Buttons = styled.div`
@@ -65,7 +84,9 @@ const _Form = styled.div`
   padding: ${MARGIN}px;
 `;
 
-const _InputTitle = styled.div`color: ${INSPECTOR_TEXT};`;
+const _InputTitle = styled.div`
+  color: ${INSPECTOR_TEXT};
+`;
 
 const _Input = styled.input`
   background-color: ${INSPECTOR_INPUT_BG};
@@ -93,6 +114,80 @@ const _Textarea = styled.textarea`
   width: 100%;
 `;
 
+const _TagButton = styled.i`
+  color: ${INSPECTOR_SECTION_TITLE_BUTTON};
+  font-style: normal;
+
+  &:hover {
+    color: ${INSPECTOR_SECTION_TITLE_BUTTON_OVER};
+  }
+`;
+
+const _PickATag = styled.div`
+  height: 100%;
+  overflow: scroll;
+  width: 100%;
+
+  div.header {
+    color: ${INSPECTOR_TEXT};
+    display: flex;
+    height: 40px;
+    justify-content: space-between;
+    padding: 0 10px;
+    width: 100%;
+
+    > span {
+      display: block;
+      font-size: 1.25em;
+      margin: auto 0;
+      text-transform: uppercase;
+    }
+
+    > i {
+      display: block;
+      font-size: 150%;
+      margin: auto 0;
+    }
+  }
+`;
+
+const _Tags = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  height: 100%;
+  overflow: auto;
+  padding: 3px;
+`;
+
+const _Tag = styled.div`
+  background: ${TAG_BG};
+  border-radius: 2px;
+  color: ${TAG_FG};
+  height: ${TAG_HEIGHT}px;
+  margin: 2px;
+
+  > div {
+    border-radius: 2px;
+    display: inline-block;
+    height: ${TAG_HEIGHT}px;
+    padding: 2px;
+
+    &:hover {
+      background-color: ${TAG_BG_OVER};
+      color: ${TAG_FG_OVER};
+    }
+  }
+
+  > i {
+    color: ${TAG_ICON_FG};
+    padding: 0 5px;
+
+    &:hover {
+      color: ${TAG_ICON_FG_OVER};
+    }
+  }
+`;
+
 // THE COMPONENT
 
 export default class extends Component {
@@ -100,46 +195,122 @@ export default class extends Component {
     super(props);
 
     this.state = {
+      selectedTag: null,
       title: this.props.annotation.title,
       targetType: this.props.annotation.targetType || '',
-      text: this.props.annotation.text
+      text: this.props.annotation.text,
+      view: VIEW_ANNOTATION_EDITOR
     };
   }
 
+  backToAnnotationEditor = () => {
+    this.setState({ view: VIEW_ANNOTATION_EDITOR });
+  };
+
+  handleClickOnTag = e => {
+    console.log('tagname', e.target.getAttribute('tagname'));
+    this.props.tagAnnotation(this.props.annotation.id, e.target.getAttribute('tagname'));
+    this.setState({ view: VIEW_ANNOTATION_EDITOR });
+  };
+
+  handleUnTagAnnotation = e => {
+    console.log(e.target);
+  };
+
   render() {
-    return (
-      <_Root>
-        <_Buttons>
-          <_Button type="button" onClick={e => this.props.cancel()}>
-            CANCEL
-          </_Button>
-          <_Button
-            type="button"
-            onClick={e => {
-              this.props.save(this.state.title, this.state.targetType, this.state.text);
-            }}
-          >
-            SAVE
-          </_Button>
-        </_Buttons>
-        {ANNOTATION_MEASURE_LINEAR === this.props.annotation.annotationType && (
-          <_Value>{this.props.annotation.value_in_mm.toFixed(2)}mm</_Value>
-        )}
-        <_Form>
-          <_InputTitle>TITLE</_InputTitle>
-          <_Input type="text" value={this.state.title} onChange={e => this.setState({ title: e.target.value })} />
+    switch (this.state.view) {
+      case VIEW_PICK_A_TAG:
+        return (
+          <_Root>
+            <_PickATag>
+              <div className="header">
+                <span>Pick a tag</span>
+                <_TagButton className="fa fa-times" aria-hidden="true" onClick={this.backToAnnotationEditor} />
+              </div>
+              <_Tags>
+                {this.props.allTags.map(_ => {
+                  return (
+                    <_Tag key={`tag_${_.name}`}>
+                      <div tagname={_.name} onClick={this.handleClickOnTag}>
+                        {_.name}
+                      </div>
+                    </_Tag>
+                  );
+                })}
+              </_Tags>
+            </_PickATag>
+          </_Root>
+        );
+      default:
+        return (
+          <_Root>
+            <_Buttons>
+              <_Button type="button" onClick={e => this.props.cancel()}>
+                CANCEL
+              </_Button>
+              <_Button
+                type="button"
+                onClick={e => {
+                  this.props.save(this.state.title, this.state.targetType, this.state.text);
+                }}
+              >
+                SAVE
+              </_Button>
+            </_Buttons>
+            <_SectionTitle>
+              TAGS&nbsp;&nbsp;<_TagButton
+                onClick={e => {
+                  this.setState({ view: VIEW_PICK_A_TAG });
+                  //TODO fetch a tagName
+                  //TOOD call this.props.tagAnnotation
+                }}
+              >
+                +TAG
+              </_TagButton>
+            </_SectionTitle>
+            <_Tags>
+              {this.props.tags &&
+                this.props.tags.map(_ => {
+                  return (
+                    <_Tag key={`tag_${_}`}>
+                      <div onClick={this.handleClickOnTag}>{_}</div>
+                      <i className="fa fa-trash fa" aria-hidden="true" onClick={this.handleUnTagAnnotation} />
+                    </_Tag>
+                  );
+                })}
+            </_Tags>
+            <_SectionTitle>METADATA</_SectionTitle>
+            {ANNOTATION_MEASURE_LINEAR === this.props.annotation.annotationType && (
+              <_Value>{this.props.annotation.value_in_mm.toFixed(2)}mm</_Value>
+            )}
+            <_Form>
+              <_InputTitle>TITLE</_InputTitle>
+              <_Input
+                type="text"
+                value={this.state.title}
+                onChange={e =>
+                  this.setState({
+                    title: e.target.value
+                  })
+                }
+              />
 
-          <_InputTitle>TARGET TYPE</_InputTitle>
-          <_Input
-            type="text"
-            value={this.state.targetType}
-            onChange={e => this.setState({ targetType: e.target.value })}
-          />
+              <_InputTitle>TARGET TYPE</_InputTitle>
+              <_Input
+                type="text"
+                value={this.state.targetType}
+                onChange={e =>
+                  this.setState({
+                    targetType: e.target.value
+                  })
+                }
+              />
 
-          <_InputTitle>TEXT</_InputTitle>
-          <_Textarea onChange={e => this.setState({ text: e.target.value })} value={this.state.text} />
-        </_Form>
-      </_Root>
-    );
+              <_InputTitle>TEXT</_InputTitle>
+              <_Textarea onChange={e => this.setState({ text: e.target.value })} value={this.state.text} />
+            </_Form>
+          </_Root>
+        );
+    }
   }
 }

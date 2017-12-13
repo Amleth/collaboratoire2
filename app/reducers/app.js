@@ -54,6 +54,7 @@ export const createInitialState = () => ({
     pictures_selection: [],
     selected_tags: [],
     standard_deviation: null,
+    tags_by_annotation: {},
     tags_by_picture: {},
     tags: [],
     tags_selection_mode: TAGS_SELECTION_MODE_OR
@@ -325,25 +326,50 @@ export default (state = {}, action) => {
     case SET_TAGS_SELECTION_MODE:
       return { ...state, tags_selection_mode: action.mode };
       break;
+    case TAG_ANNOTATION:
+      {
+        // Is the tag already present?
+        if (
+          state.tags_by_annotation.hasOwnProperty(action.annotationId) &&
+          state.tags_by_annotation[action.annotationId].indexOf(action.tagName) !== -1
+        )
+          return state;
+
+        const new_state = { ...state };
+
+        // tags_by_annotation
+        if (!new_state.tags_by_annotation.hasOwnProperty(action.annotationId))
+          new_state.tags_by_annotation[action.annotationId] = [];
+        new_state.tags_by_annotation[action.annotationId] = [
+          action.tagName,
+          ...new_state.tags_by_annotation[action.annotationId]
+        ];
+
+        return new_state;
+      }
+      break;
     case TAG_PICTURE:
-      // Is the tag already present?
-      if (
-        state.tags_by_picture.hasOwnProperty(action.pictureId) &&
-        state.tags_by_picture[action.pictureId].indexOf(action.tagName) !== -1
-      )
-        return state;
+      {
+        // Is the tag already present?
+        if (
+          state.tags_by_picture.hasOwnProperty(action.pictureId) &&
+          state.tags_by_picture[action.pictureId].indexOf(action.tagName) !== -1
+        )
+          return state;
 
-      const new_state = { ...state };
+        const new_state = { ...state };
 
-      // tags_by_picture
-      if (!new_state.tags_by_picture.hasOwnProperty(action.pictureId)) new_state.tags_by_picture[action.pictureId] = [];
-      new_state.tags_by_picture[action.pictureId] = [action.tagName, ...new_state.tags_by_picture[action.pictureId]];
+        // tags_by_picture
+        if (!new_state.tags_by_picture.hasOwnProperty(action.pictureId))
+          new_state.tags_by_picture[action.pictureId] = [];
+        new_state.tags_by_picture[action.pictureId] = [action.tagName, ...new_state.tags_by_picture[action.pictureId]];
 
-      // pictures_by_tag
-      if (!new_state.pictures_by_tag.hasOwnProperty(action.tagName)) new_state.pictures_by_tag[action.tagName] = [];
-      new_state.pictures_by_tag[action.tagName] = [action.pictureId, ...new_state.pictures_by_tag[action.tagName]];
+        // pictures_by_tag
+        if (!new_state.pictures_by_tag.hasOwnProperty(action.tagName)) new_state.pictures_by_tag[action.tagName] = [];
+        new_state.pictures_by_tag[action.tagName] = [action.pictureId, ...new_state.pictures_by_tag[action.tagName]];
 
-      return new_state;
+        return new_state;
+      }
       break;
     case UNSELECT_TAG:
       const tag_to_remove_index = state.selected_tags.indexOf(action.name);

@@ -280,17 +280,16 @@ export default class extends Component {
           );
           this.setState({ editedAnnotation: null });
         }}
+        tags={this.props.tagsByAnnotation[this.state.editedAnnotation.id]}
       />
     ) : (
       <_Root>
         <_Tabs>
           <_Tab selected={this.state.selectedTab === TAB_METADATA} onClick={e => this.selectTab(TAB_METADATA)}>
             METADATA
-            {/* <i className="fa fa-id-card-o fa" aria-hidden="true" /> */}
           </_Tab>
           <_Tab selected={this.state.selectedTab === TAB_ANNOTATIONS} onClick={e => this.selectTab(TAB_ANNOTATIONS)}>
             ANNOTATIONS
-            {/* <i className="fa fa-pencil fa" aria-hidden="true" /> */}
           </_Tab>
         </_Tabs>
         {this.state.selectedTab === TAB_METADATA && (
