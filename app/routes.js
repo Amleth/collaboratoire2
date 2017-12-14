@@ -1,7 +1,7 @@
 import React from 'react';
 import { Switch, Route } from 'react-router';
 
-import App from './components/App';
+import App from './containers/App';
 import Home from './containers/Home';
 import Library from './containers/Library';
 import FreeSpace from './containers/FreeSpace';

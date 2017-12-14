@@ -11,7 +11,6 @@ import Home from './Home';
 import Library from '../containers/Library';
 import Image from '../containers/Image';
 import Data from '../containers/Data';
-import { store } from '../index';
 import { userDataBranches } from '../reducers/app';
 
 const _Root = styled.div`
@@ -73,11 +72,10 @@ export default class App extends Component {
     let file = remote.dialog.showOpenDialog();
     if (!file || file.length < 1) return;
     file = file.pop();
-
     try {
       const content = JSON.parse(fs.readFileSync(file, 'utf8'));
       for (const _ in userDataBranches()) {
-        store.getState()['app'][_] = content.userdata[_];
+        this.props.appState[_] = content.userdata[_];
       }
     } catch (e) {
       remote.dialog.showErrorBox('Argh', 'Invalid file');
@@ -87,10 +85,9 @@ export default class App extends Component {
   save = () => {
     let file = remote.dialog.showSaveDialog();
     if (!file || file.length < 1) return;
-
     const content = { userdata: {} };
     for (const _ in userDataBranches()) {
-      content.userdata[_] = store.getState()['app'][_];
+      content.userdata[_] = this.props.appState[_];
     }
     content.date = new Date();
     fs.writeFileSync(file, JSON.stringify(content));
