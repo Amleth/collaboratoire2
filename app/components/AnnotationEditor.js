@@ -154,7 +154,6 @@ const _PickATag = styled.div`
 const _Tags = styled.div`
   display: flex;
   flex-wrap: wrap;
-  height: 100%;
   overflow: auto;
   padding: 3px;
 `;
