@@ -56,7 +56,7 @@ const go = picturesArray => {
   const initialState = createInitialState();
   initialState.app.pictures = picturesObject;
   initialState.app.pictures_selection = Object.keys(picturesObject);
-  store = configureStore(initialState).store;
+  store = configureStore(initialState);
 
   // add erecolnat metadata
   for (const p in store.getState().app.pictures) {
