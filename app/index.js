@@ -8,7 +8,6 @@ import React from 'react';
 import { render } from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
 import { push } from 'react-router-redux';
-import rimraf from 'rimraf';
 
 import { RECOLNAT_CAMILLE_DEGARDIN } from './components/constants';
 import Loading from './components/Loading';
@@ -23,13 +22,11 @@ import { getMetadata } from './system/erecolnat-metadata';
 import './app.global.css';
 import 'react-virtualized/styles.css';
 
-export let store;
 const chance = new Chance();
 const start = new Date().getTime();
 
 // Create application cache & user data directories
 const CACHE_DIR = path.join(remote.app.getPath('home'), 'collaboratoire2-cache');
-// rimraf.sync(CACHE_DIR);
 const THUMBNAILS_DIR = path.join(CACHE_DIR, 'thumbnails');
 export const USER_DATA_DIR = path.join(remote.app.getPath('home'), 'collaboratoire2-userdata');
 const CACHE_FILE = path.join(CACHE_DIR, 'cache.json');
