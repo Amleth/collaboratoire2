@@ -24,10 +24,9 @@ import {
   TAG_ICON_FG_OVER
 } from './constants';
 import { MARGIN as INSPECTOR_MARGIN, WIDTH as INSPECTOR_WIDTH } from './Inspector';
-import { findPictures } from '../business_logic/tags';
-import { TAGS_SELECTION_MODE_AND, TAGS_SELECTION_MODE_OR } from '../data/constants';
-import Inspector from '../Containers/Inspector';
 import Nothing from './Nothing';
+import Inspector from '../Containers/Inspector';
+import { TAGS_SELECTION_MODE_AND, TAGS_SELECTION_MODE_OR } from '../data/constants';
 
 //
 // CONSTANTS
@@ -210,7 +209,6 @@ export default class extends PureComponent {
   constructor(props) {
     super(props);
 
-    const allPictures = Object.values(props.allPictures);
     const sortBy = 'sha1';
     const sortDirection = SortDirection.ASC;
     const sortedPicturesList = this._sortList({ sortBy, sortDirection });
@@ -218,8 +216,7 @@ export default class extends PureComponent {
     this.state = {
       currentPicture: sortedPicturesList[0],
       newTagName: '',
-      allPictures,
-      rowCount: allPictures.length,
+      pictures: this.props.picturesSelection.map(_ => this.props.allPictures[_]),
       sortBy,
       sortDirection,
       sortedPicturesList,
@@ -234,21 +231,15 @@ export default class extends PureComponent {
     this.click_tagsSelectionMode = this.click_tagsSelectionMode.bind(this);
   }
 
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      pictures: nextProps.picturesSelection.map(_ => this.props.allPictures[_])
+    });
+  }
+
   render() {
     if (Object.values(this.props.allPictures).length === 0)
       return <Nothing message={'Declare at least one folder containing pictures'} />;
-
-    //TODO This is UGLY!
-    const pictures =
-      this.props.selectedTags.length === 0
-        ? this.state.sortedPicturesList
-        : findPictures(
-            this.props.tagsByPicture,
-            this.props.picturesByTag,
-            this.props.selectedTags,
-            this.props.tagsSelectionMode
-          ).map(_ => this.props.allPictures[_]);
-    this.props.setPicturesSelection(pictures.map(_ => _.sha1));
 
     let key = 0;
 
@@ -308,7 +299,7 @@ export default class extends PureComponent {
               })}
             </_AllTags>
           </_Tags>
-          <_PicturesHeader>&nbsp;PICTURES ({pictures.length})</_PicturesHeader>
+          <_PicturesHeader>&nbsp;PICTURES ({this.state.pictures.length})</_PicturesHeader>
         </_Header>
         <_Pictures>
           <div style={{ flex: '1 1 auto' }}>
@@ -320,8 +311,8 @@ export default class extends PureComponent {
                   height={height}
                   overscanRowCount={10}
                   rowClassName={this._rowClassName}
-                  rowCount={pictures.length}
-                  rowGetter={({ index }) => pictures[index % pictures.length]}
+                  rowCount={this.state.pictures.length}
+                  rowGetter={({ index }) => this.state.pictures[index % this.state.pictures.length]}
                   rowHeight={20}
                   sort={this._sort}
                   sortBy={this.state.sortBy}
@@ -462,7 +453,7 @@ export default class extends PureComponent {
 
   _sortList({ sortBy, sortDirection }) {
     const sorted = lodash.sortBy(
-      this.props.allPictures,
+      this.props.picturesSelection,
       _ => (typeof _[sortBy] === 'string' ? _[sortBy].toLowerCase() : _[sortBy])
     );
 

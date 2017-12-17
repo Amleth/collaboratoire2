@@ -29,7 +29,6 @@ import {
   UNTAG_ANNOTATION,
   UNTAG_PICTURE
 } from '../actions/app';
-
 import {
   ANNOTATION_MEASURE_LINEAR,
   ANNOTATION_POINT_OF_INTEREST,
@@ -37,6 +36,7 @@ import {
   TAGS_SELECTION_MODE_AND,
   TAGS_SELECTION_MODE_OR
 } from '../data/constants';
+import { findPictures } from '../business_logic/tags';
 
 const chance = new Chance();
 
@@ -313,8 +313,12 @@ export default (state = {}, action) => {
       }
       break;
     case SELECT_TAG:
-      if (state.selected_tags.indexOf(action.name) !== -1) return state;
-      return { ...state, selected_tags: [action.name, ...state.selected_tags] };
+      {
+        const selectedTags = [action.name, ...state.selected_tags];
+        if (state.selected_tags.indexOf(action.name) !== -1) return state;
+        const pictures_selection = findPicturesByTags(state, selectedTags, state.tags_selection_mode);
+        return { ...state, selected_tags: selectedTags, pictures_selection };
+      }
       break;
     case SET_PICTURE_IN_SELECTION:
       const index = state.pictures_selection.indexOf(action.pictureId);
@@ -324,7 +328,11 @@ export default (state = {}, action) => {
       return { ...state, pictures_selection: action.pictures_selection, current_picture_index_in_selection: 0 };
       break;
     case SET_TAGS_SELECTION_MODE:
-      return { ...state, tags_selection_mode: action.mode };
+      {
+        if (action.mode === state.tags_selection_mode) return state;
+        const pictures_selection = findPicturesByTags(state, state.selected_tags, action.mode);
+        return { ...state, tags_selection_mode: action.mode, pictures_selection };
+      }
       break;
     case TAG_ANNOTATION:
       {
@@ -372,16 +380,23 @@ export default (state = {}, action) => {
       }
       break;
     case UNSELECT_TAG:
-      const tag_to_remove_index = state.selected_tags.indexOf(action.name);
-      if (tag_to_remove_index === -1) return state;
+      {
+        const tag_to_remove_index = state.selected_tags.indexOf(action.name);
+        if (tag_to_remove_index === -1) return state;
 
-      return {
-        ...state,
-        selected_tags: [
+        const selectedTags = [
           ...state.selected_tags.slice(0, tag_to_remove_index),
           ...state.selected_tags.slice(tag_to_remove_index + 1)
-        ]
-      };
+        ];
+
+        const pictures_selection = findPicturesByTags(state, selectedTags, state.tags_selection_mode);
+
+        return {
+          ...state,
+          pictures_selection,
+          selected_tags: selectedTags
+        };
+      }
       break;
     case UNTAG_PICTURE:
       {
@@ -410,4 +425,13 @@ export default (state = {}, action) => {
     default:
       return state;
   }
+};
+
+//
+// HELPERS
+//
+
+const findPicturesByTags = (state, selectedTags, tagsSelectionMode) => {
+  if (selectedTags.length === 0) return Object.keys(state.pictures);
+  return findPictures(state.tags_by_picture, state.pictures_by_tag, selectedTags, tagsSelectionMode);
 };

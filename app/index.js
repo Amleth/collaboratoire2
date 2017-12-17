@@ -63,10 +63,20 @@ const go = picturesArray => {
 
   console.log(`${new Date().getTime() - start}ms`);
 
-  // Ugly hack to be sure to start at the '/' route
-  setTimeout(function() {
-    store.dispatch(push('/'));
-  }, 500);
+  if (process.env.NODE_ENV === 'production') {
+    // Ugly hack to be sure to start at the '/' route
+    setTimeout(function() {
+      store.dispatch(push('/'));
+    }, 500);
+  } else {
+    setTimeout(function() {
+      store.dispatch({ type: 'CREATE_TAG', name: 'Blip' });
+      store.dispatch({ type: 'CREATE_TAG', name: 'Blop' });
+      store.dispatch({ type: 'CREATE_TAG', name: 'Bzz' });
+      store.dispatch({ type: 'CREATE_TAG', name: 'Bzzz' });
+      store.dispatch({ type: 'CREATE_TAG', name: 'Osric' });
+    }, 500);
+  }
 
   render(
     <AppContainer>

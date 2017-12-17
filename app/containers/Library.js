@@ -17,14 +17,15 @@ import { arrayToIndex } from '../utils/js';
 
 const mapStateToProps = state => {
   return {
+    allPictures: state.app.pictures,
     annotationsMeasuresLinear: state.app.annotations_measures_linear,
     annotationsRectangular: state.app.annotations_rectangular,
     annotationsPointsOfInterest: state.app.annotations_points_of_interest,
-    allPictures: state.app.pictures,
-    tags: state.app.tags,
-    selectedTags: state.app.selected_tags,
-    tagsByPicture: state.app.tags_by_picture,
     picturesByTag: state.app.pictures_by_tag,
+    picturesSelection: state.app.pictures_selection,
+    selectedTags: state.app.selected_tags,
+    tags: state.app.tags,
+    tagsByPicture: state.app.tags_by_picture,
     tagsSelectionMode: state.app.tags_selection_mode
   };
 };

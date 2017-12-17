@@ -16,10 +16,13 @@ import {
   PREVIOUS_TEN_PICTURE_IN_SELECTION,
   SELECT_TAG,
   TAG_PICTURE,
+  UNSELECT_TAG,
   UNTAG_PICTURE,
-  CREATE_TAG
+  CREATE_TAG,
+  SET_TAGS_SELECTION_MODE
 } from '../../app/actions/app';
 import { ANNOTATION_MEASURE_LINEAR } from '../../app/data/constants';
+import { TAGS_SELECTION_MODE_AND, TAGS_SELECTION_MODE_OR } from '../../app/data/constants';
 
 const chance = new Chance();
 
@@ -140,12 +143,11 @@ test('It should tag then untag a picture', () => {
 });
 
 test('It should delete a tag', () => {
-  const initialState = createInitialState().app;
   const pictureId = chance.guid();
   const tag1Name = chance.string();
   const tag2Name = chance.string();
 
-  let state = initialState;
+  let state = createInitialState().app;
   state = r(state, { type: CREATE_TAG, name: tag1Name });
   state = r(state, { type: TAG_PICTURE, pictureId: pictureId, tagName: tag1Name });
   state = r(state, { type: SELECT_TAG, name: tag1Name });
@@ -159,6 +161,87 @@ test('It should delete a tag', () => {
   expect(state.tags.filter(_ => _.name === tag2Name).length).toEqual(1);
   expect(state.tags_by_picture).toEqual({ [pictureId]: [tag2Name] });
   expect(state.pictures_by_tag).toEqual({ [tag2Name]: [pictureId] });
+});
+
+test('It should change pictures selection', () => {
+  const picture1Id = chance.guid();
+  const picture2Id = chance.guid();
+  const picture3Id = chance.guid();
+  const picture4Id = chance.guid();
+  const tag1Name = chance.string();
+  const tag2Name = chance.string();
+
+  let state = createInitialState().app;
+  state.pictures = {
+    [picture1Id]: { id: picture1Id },
+    [picture2Id]: { id: picture2Id },
+    [picture3Id]: { id: picture3Id },
+    [picture4Id]: { id: picture4Id }
+  };
+  state = r(state, {
+    type: CREATE_TAG,
+    name: tag1Name
+  });
+  state = r(state, {
+    type: CREATE_TAG,
+    name: tag2Name
+  });
+  state = r(state, {
+    type: TAG_PICTURE,
+    pictureId: picture1Id,
+    tagName: tag1Name
+  });
+  state = r(state, {
+    type: TAG_PICTURE,
+    pictureId: picture2Id,
+    tagName: tag2Name
+  });
+  state = r(state, {
+    type: TAG_PICTURE,
+    pictureId: picture3Id,
+    tagName: tag1Name
+  });
+  state = r(state, {
+    type: TAG_PICTURE,
+    pictureId: picture3Id,
+    tagName: tag2Name
+  });
+
+  // TAGS SELECTION MODE: OR
+
+  expect(state.selected_tags).toEqual([]);
+  expect(state.pictures_selection).toEqual([]);
+
+  state = r(state, { type: SELECT_TAG, name: tag1Name });
+  expect(state.pictures_selection.sort()).toEqual([picture1Id, picture3Id].sort());
+
+  state = r(state, { type: SELECT_TAG, name: tag2Name });
+  expect(state.pictures_selection.sort()).toEqual([picture1Id, picture2Id, picture3Id].sort());
+
+  state = r(state, { type: UNSELECT_TAG, name: tag1Name });
+  expect(state.pictures_selection.sort()).toEqual([picture2Id, picture3Id].sort());
+
+  state = r(state, { type: UNSELECT_TAG, name: tag2Name });
+  expect(state.pictures_selection.sort()).toEqual([].sort());
+
+  // TAGS SELECTION MODE: AND
+
+  state = r(state, { type: SET_TAGS_SELECTION_MODE, mode: TAGS_SELECTION_MODE_AND });
+
+  expect(state.selected_tags).toEqual([]);
+  expect(state.pictures_selection).toEqual([]);
+
+  state = r(state, { type: SELECT_TAG, name: tag1Name });
+  expect(state.pictures_selection.sort()).toEqual([picture1Id, picture3Id].sort());
+
+  state = r(state, { type: SELECT_TAG, name: tag2Name });
+  expect(state.pictures_selection.sort()).toEqual([picture3Id].sort());
+
+  state = r(state, { type: UNSELECT_TAG, name: tag1Name });
+  expect(state.pictures_selection.sort()).toEqual([picture2Id, picture3Id].sort());
+
+  state = r(state, { type: UNSELECT_TAG, name: tag2Name });
+  expect(state.pictures_selection.sort()).toEqual([].sort());
 });
 
 //
@@ -193,7 +276,7 @@ test('It should create two linear annotations and the delete the first one', () 
     value_in_mm: 222
   });
 
-  annotations = lodash.sortBy(newState.annotations_measures_linear[pictureId], 'creationTimestamp');
+  annotations = lodash.sortBy(newState.annotations_measures_linear[pictureId], 'value_in_mm');
   expect(annotations.length).toBe(2);
   expect(annotations[1].annotationType).toBe(ANNOTATION_MEASURE_LINEAR);
   expect(annotations[1].pictureId).toBe(pictureId);
