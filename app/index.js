@@ -65,8 +65,8 @@ const go = picturesArray => {
 
   if (process.env.NODE_ENV === 'production') {
     // Ugly hack to be sure to start at the '/' route
-    setTimeout(function() {
-      store.dispatch(push('/image'));
+    setTimeout(() => {
+      store.dispatch(push('/'));
     }, 500);
   } else {
     setTimeout(function() {
