@@ -14,7 +14,7 @@ export default () => (
       {<Route exact path="/" component={Home} />}
       {<Route exact path="/library" component={Library} />}
       {<Route exact path="/image" component={Image} />}
-      {<Route exact path="/freespace" component={FreeSpace} />}
+      {/* {<Route exact path="/freespace" component={FreeSpace} />} */}
       {<Route exact path="/data" component={Data} />}
     </Switch>
   </App>
