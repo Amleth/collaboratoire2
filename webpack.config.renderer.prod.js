@@ -8,6 +8,7 @@ import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import merge from 'webpack-merge';
 import MinifyPlugin from 'babel-minify-webpack-plugin';
+import UglifyJsPlugin from 'uglifyjs-webpack-plugin';
 import baseConfig from './webpack.config.base';
 import CheckNodeEnv from './internals/scripts/CheckNodeEnv';
 
@@ -159,6 +160,7 @@ export default merge.smart(baseConfig, {
      * Babli is an ES6+ aware minifier based on the Babel toolchain (beta)
      */
     // new MinifyPlugin(),
+    new UglifyJsPlugin({ uglifyOptions: { ecma: 7 } }),
 
     new ExtractTextPlugin('style.css'),
 
