@@ -5,14 +5,14 @@ import { editAnnotation, focusAnnotation, tagAnnotation, untagAnnotation } from 
 const mapStateToProps = (state, ownProps) => {
   return {
     allTags: state.app.tags,
-    tagsByAnnotation: state.app.tags_by_annotation
+    tags: state.app.tags_by_annotation[ownProps.annotation.id]
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch, ownProps) => {
   return {
-    tagAnnotation: (annotationId, tagName) => dispatch(tagAnnotation(annotationId, tagName)),
-    untagAnnotation: (annotationId, tagName) => dispatch(untagAnnotation(annotationId, tagName))
+    tagAnnotation: tagName => dispatch(tagAnnotation(ownProps.annotation.id, tagName)),
+    untagAnnotation: tagName => dispatch(untagAnnotation(ownProps.annotation.id, tagName))
   };
 };
 

@@ -66,6 +66,7 @@ export const userDataBranches = () => ({
   annotations_points_of_interest: null,
   annotations_rectangular: null,
   pictures_by_tag: null,
+  tags_by_annotation: null,
   tags_by_picture: null,
   tags: null
 });
@@ -395,6 +396,22 @@ export default (state = {}, action) => {
           ...state,
           pictures_selection,
           selected_tags: selectedTags
+        };
+      }
+      break;
+    case UNTAG_ANNOTATION:
+      {
+        const i = state.tags_by_annotation[action.annotationId].indexOf(action.tagName);
+
+        return {
+          ...state,
+          tags_by_annotation: {
+            ...state.tags_by_annotation,
+            [action.annotationId]: [
+              ...state.tags_by_annotation[action.annotationId].slice(0, i),
+              ...state.tags_by_annotation[action.annotationId].slice(i + 1)
+            ]
+          }
         };
       }
       break;

@@ -121,12 +121,15 @@ const _Tag = styled.div`
     height: ${TAG_HEIGHT}px;
     padding: 2px;
 
-    ${props =>
-      props.selected &&
-      css`
-        background-color: ${TAG_BG_OVER};
-        color: ${TAG_FG_OVER};
-      `};
+    ${props => {
+      return (
+        props.selected &&
+        css`
+          background-color: ${TAG_BG_OVER};
+          color: ${TAG_FG_OVER};
+        `
+      );
+    }};
 
     &:hover {
       background-color: ${TAG_BG_OVER};

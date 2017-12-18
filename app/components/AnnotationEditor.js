@@ -170,11 +170,11 @@ const _Tag = styled.div`
     display: inline-block;
     height: ${TAG_HEIGHT}px;
     padding: 2px;
+  }
 
-    &:hover {
-      background-color: ${TAG_BG_OVER};
-      color: ${TAG_FG_OVER};
-    }
+  > div.available:hover {
+    background-color: ${TAG_BG_OVER};
+    color: ${TAG_FG_OVER};
   }
 
   > i {
@@ -207,13 +207,12 @@ export default class extends Component {
   };
 
   handleClickOnTag = e => {
-    console.log('tagname', e.target.getAttribute('tagname'));
-    this.props.tagAnnotation(this.props.annotation.id, e.target.getAttribute('tagname'));
+    this.props.tagAnnotation(e.target.getAttribute('tagname'));
     this.setState({ view: VIEW_ANNOTATION_EDITOR });
   };
 
   handleUnTagAnnotation = e => {
-    console.log(e.target);
+    this.props.untagAnnotation(e.target.getAttribute('tagname'));
   };
 
   render() {
@@ -230,7 +229,7 @@ export default class extends Component {
                 {this.props.allTags.map(_ => {
                   return (
                     <_Tag key={`tag_${_.name}`}>
-                      <div tagname={_.name} onClick={this.handleClickOnTag}>
+                      <div className="available" tagname={_.name} onClick={this.handleClickOnTag}>
                         {_.name}
                       </div>
                     </_Tag>
@@ -272,8 +271,13 @@ export default class extends Component {
                 this.props.tags.map(_ => {
                   return (
                     <_Tag key={`tag_${_}`}>
-                      <div onClick={this.handleClickOnTag}>{_}</div>
-                      <i className="fa fa-trash fa" aria-hidden="true" onClick={this.handleUnTagAnnotation} />
+                      <div>{_}</div>
+                      <i
+                        className="fa fa-trash fa"
+                        aria-hidden="true"
+                        tagname={_}
+                        onClick={this.handleUnTagAnnotation}
+                      />
                     </_Tag>
                   );
                 })}

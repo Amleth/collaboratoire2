@@ -280,7 +280,6 @@ export default class extends Component {
           );
           this.setState({ editedAnnotation: null });
         }}
-        tags={this.props.tagsByAnnotation[this.state.editedAnnotation.id]}
       />
     ) : (
       <_Root>

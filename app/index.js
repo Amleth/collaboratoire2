@@ -12,7 +12,7 @@ import { push } from 'react-router-redux';
 import { RECOLNAT_CAMILLE_DEGARDIN } from './components/constants';
 import Loading from './components/Loading';
 import { fromConfigFile, getAllPicturesDirectories, getEnabledPicturesDirectories, setConfigFilePath } from './config';
-import { importExploreJson } from './actions/app';
+import { createAnnotationMeasureLinear, importExploreJson, CREATE_ANNOTATION_MEASURE_LINEAR } from './actions/app';
 import Root from './containers/Root';
 import { createInitialState } from './reducers/app';
 import { configureStore, history } from './store/configureStore';
@@ -66,7 +66,7 @@ const go = picturesArray => {
   if (process.env.NODE_ENV === 'production') {
     // Ugly hack to be sure to start at the '/' route
     setTimeout(function() {
-      store.dispatch(push('/'));
+      store.dispatch(push('/image'));
     }, 500);
   } else {
     setTimeout(function() {
@@ -75,6 +75,15 @@ const go = picturesArray => {
       store.dispatch({ type: 'CREATE_TAG', name: 'Bzz' });
       store.dispatch({ type: 'CREATE_TAG', name: 'Bzzz' });
       store.dispatch({ type: 'CREATE_TAG', name: 'Osric' });
+      store.dispatch({
+        type: CREATE_ANNOTATION_MEASURE_LINEAR,
+        pictureId: initialState.app.pictures_selection[0],
+        x1: 111,
+        y1: 111,
+        x2: 1111,
+        y2: 1111,
+        value_in_mm: 333
+      });
     }, 500);
   }
 
