@@ -55,7 +55,7 @@ const go = picturesArray => {
   initialState.app.pictures_selection = Object.keys(picturesObject);
   const store = configureStore(initialState);
 
-  // add erecolnat metadata
+  // Add erecolnat metadata
   for (const p in store.getState().app.pictures) {
     const erecolnatMetadata = getMetadata(store.getState().app.pictures[p].file);
     if (erecolnatMetadata) store.getState().app.pictures[p].erecolnatMetadata = erecolnatMetadata;
@@ -69,7 +69,7 @@ const go = picturesArray => {
       store.dispatch(push('/'));
     }, 500);
   } else {
-    setTimeout(function() {
+    setTimeout(() => {
       store.dispatch({ type: 'CREATE_TAG', name: 'Blip' });
       store.dispatch({ type: 'CREATE_TAG', name: 'Blop' });
       store.dispatch({ type: 'CREATE_TAG', name: 'Bzz' });
@@ -113,10 +113,10 @@ if (getAllPicturesDirectories().length > 0) {
     <Loading directories={getAllPicturesDirectories()} loadingEventEmitter={ee} />,
     document.getElementById('root')
   );
-  initPicturesLibrary(CACHE_FILE, THUMBNAILS_DIR, getEnabledPicturesDirectories());
   ee.on(EVENT_COMPLETE, picturesArray => {
     go(picturesArray);
   });
+  initPicturesLibrary(CACHE_FILE, THUMBNAILS_DIR, getEnabledPicturesDirectories());
 } else {
   go([]);
 }
