@@ -49,15 +49,6 @@ const _SectionTitle = styled.div`
   width: 100%;
 `;
 
-const _Buttons = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  padding: ${MARGIN}px;
-  width: ${WIDTH}px;
-`;
-
 const _Button = styled.button`
   background-color: ${INSPECTOR_BG};
   border: none;
@@ -123,32 +114,32 @@ const _TagButton = styled.i`
   }
 `;
 
+const _Header = styled.div`
+  color: ${INSPECTOR_TEXT};
+  display: flex;
+  height: 40px;
+  justify-content: space-between;
+  padding: 0 10px;
+  width: 100%;
+
+  > span {
+    display: block;
+    font-size: 1.25em;
+    margin: auto 0;
+    text-transform: uppercase;
+  }
+
+  > i {
+    display: block;
+    font-size: 150%;
+    margin: auto 0;
+  }
+`;
+
 const _PickATag = styled.div`
   height: 100%;
   overflow: scroll;
   width: 100%;
-
-  div.header {
-    color: ${INSPECTOR_TEXT};
-    display: flex;
-    height: 40px;
-    justify-content: space-between;
-    padding: 0 10px;
-    width: 100%;
-
-    > span {
-      display: block;
-      font-size: 1.25em;
-      margin: auto 0;
-      text-transform: uppercase;
-    }
-
-    > i {
-      display: block;
-      font-size: 150%;
-      margin: auto 0;
-    }
-  }
 `;
 
 const _Tags = styled.div`
@@ -211,6 +202,10 @@ export default class extends Component {
     this.setState({ view: VIEW_ANNOTATION_EDITOR });
   };
 
+  cancel = e => {
+    this.props.cancel();
+  };
+
   handleUnTagAnnotation = e => {
     this.props.untagAnnotation(e.target.getAttribute('tagname'));
   };
@@ -221,10 +216,10 @@ export default class extends Component {
         return (
           <_Root>
             <_PickATag>
-              <div className="header">
+              <_Header>
                 <span>Pick a tag</span>
                 <_TagButton className="fa fa-times" aria-hidden="true" onClick={this.backToAnnotationEditor} />
-              </div>
+              </_Header>
               <_Tags>
                 {this.props.allTags.map(_ => {
                   return (
@@ -242,25 +237,14 @@ export default class extends Component {
       default:
         return (
           <_Root>
-            <_Buttons>
-              <_Button type="button" onClick={e => this.props.cancel()}>
-                CANCEL
-              </_Button>
-              <_Button
-                type="button"
-                onClick={e => {
-                  this.props.save(this.state.title, this.state.targetType, this.state.text);
-                }}
-              >
-                SAVE
-              </_Button>
-            </_Buttons>
+            <_Header>
+              <span />
+              <_TagButton className="fa fa-times" aria-hidden="true" onClick={this.cancel} />
+            </_Header>
             <_SectionTitle>
               TAGS&nbsp;&nbsp;<_TagButton
                 onClick={e => {
                   this.setState({ view: VIEW_PICK_A_TAG });
-                  //TODO fetch a tagName
-                  //TOOD call this.props.tagAnnotation
                 }}
               >
                 +TAG
@@ -282,7 +266,15 @@ export default class extends Component {
                   );
                 })}
             </_Tags>
-            <_SectionTitle>METADATA</_SectionTitle>
+            <_SectionTitle>
+              METADATA&nbsp;&nbsp;<_TagButton
+                onClick={e => {
+                  this.props.save(this.state.title, this.state.targetType, this.state.text);
+                }}
+              >
+                SAVE
+              </_TagButton>
+            </_SectionTitle>
             {ANNOTATION_MEASURE_LINEAR === this.props.annotation.annotationType && (
               <_Value>{this.props.annotation.value_in_mm.toFixed(2)}mm</_Value>
             )}
