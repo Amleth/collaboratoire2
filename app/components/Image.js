@@ -10,6 +10,8 @@ import { getCartesianDistanceInMm, getTopLeftAndBottomRightPointsFromTwoClicks, 
 import Inspector from '../Containers/Inspector';
 import Nothing from './Nothing';
 
+import Toolbar, { setResetZoomLevel } from './ImageReactSVGPanZoomCustomToolbar';
+
 //
 // STYLE
 //
@@ -213,6 +215,8 @@ class Image extends PureComponent {
   constructor(props, context) {
     super(props, context);
 
+    setResetZoomLevel(this.resetZoomLevel);
+
     this.Viewer = null;
     this.pendingAnnotationMeasureLinear = null;
     this.pendingAnnotationRectangle = null;
@@ -315,8 +319,6 @@ class Image extends PureComponent {
               <_ViewerInfo>
                 <i className="fa fa-search fa" aria-hidden="true" />
                 &nbsp;&nbsp;
-                <_ResetZoomLevel onClick={this.resetZoomLevel}>1:1</_ResetZoomLevel>
-                &nbsp;&nbsp;
                 <span>{`${(100 * this.state.zoomLevel).toFixed(2)}%`}</span>
               </_ViewerInfo>
             )}
@@ -337,6 +339,7 @@ class Image extends PureComponent {
               {({ width, height }) => (
                 <ReactSVGPanZoom
                   background={SVGPANZOOM_BG}
+                  customToolbar={Toolbar}
                   ref={_ => (this.Viewer = _)}
                   width={width}
                   height={height}
