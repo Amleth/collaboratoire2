@@ -231,9 +231,9 @@ export default class extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const unsortedPicturesList = nextProps.picturesSelection.map(_ => this.props.allPictures[_]);
-    const sortedPicturesList = this._sortList(this.state.sortBy, this.state.sortDirection);
+    const sortedPicturesList = this._sortList(this.state.sortBy, this.state.sortDirection, unsortedPicturesList);
 
-    this.setState({ sortedPicturesList });
+    this.state.sortedPicturesList = sortedPicturesList;
   }
 
   render() {
