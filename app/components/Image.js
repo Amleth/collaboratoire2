@@ -409,7 +409,7 @@ class Image extends PureComponent {
                           );
                         })}
                       {this.props.annotationsRectangular[this.state.currentPicture.sha1] &&
-                        this.props.annotationsRectangular[this.state.currentPicture.sha1id].map(_ => {
+                        this.props.annotationsRectangular[this.state.currentPicture.sha1].map(_ => {
                           const FOCUSED =
                             this.props.focusedAnnotation && this.props.focusedAnnotation.annotationId === _.id;
                           return (
