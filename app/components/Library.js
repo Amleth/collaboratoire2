@@ -212,32 +212,28 @@ export default class extends PureComponent {
   constructor(props) {
     super(props);
 
+    const initPicturesList = this.props.picturesSelection.map(_ => this.props.allPictures[_]);
+
     const sortBy = 'sha1';
     const sortDirection = SortDirection.ASC;
-    const sortedPicturesList = this._sortList({ sortBy, sortDirection });
+    const sortedPicturesList = this._sortList(sortBy, sortDirection, initPicturesList);
 
     this.state = {
       currentPicture: sortedPicturesList[0],
+      initPicturesList,
       newTagName: '',
-      pictures: this.props.picturesSelection.map(_ => this.props.allPictures[_]),
       sortBy,
       sortDirection,
       sortedPicturesList,
       windowScrollerEnabled: false
     };
-
-    this.handleNewTagNameChange = this.handleNewTagNameChange.bind(this);
-    this.handleCreateNewTagSubmit = this.handleCreateNewTagSubmit.bind(this);
-    this.handleClickOnTag = this.handleClickOnTag.bind(this);
-    this._rowClassName = this._rowClassName.bind(this);
-    this._sort = this._sort.bind(this);
-    this.click_tagsSelectionMode = this.click_tagsSelectionMode.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({
-      pictures: nextProps.picturesSelection.map(_ => this.props.allPictures[_])
-    });
+    const unsortedPicturesList = nextProps.picturesSelection.map(_ => this.props.allPictures[_]);
+    const sortedPicturesList = this._sortList(this.state.sortBy, this.state.sortDirection, initPicturesList);
+
+    this.setState({ sortedPicturesList });
   }
 
   render() {
@@ -302,7 +298,7 @@ export default class extends PureComponent {
               })}
             </_AllTags>
           </_Tags>
-          <_PicturesHeader>&nbsp;PICTURES ({this.state.pictures.length})</_PicturesHeader>
+          <_PicturesHeader>&nbsp;PICTURES ({this.state.sortedPicturesList.length})</_PicturesHeader>
         </_Header>
         <_Pictures>
           <div style={{ flex: '1 1 auto' }}>
@@ -314,8 +310,8 @@ export default class extends PureComponent {
                   height={height}
                   overscanRowCount={10}
                   rowClassName={this._rowClassName}
-                  rowCount={this.state.pictures.length}
-                  rowGetter={({ index }) => this.state.pictures[index % this.state.pictures.length]}
+                  rowCount={this.state.sortedPicturesList.length}
+                  rowGetter={({ index }) => this.state.sortedPicturesList[index % this.state.sortedPicturesList.length]}
                   rowHeight={20}
                   sort={this._sort}
                   sortBy={this.state.sortBy}
@@ -415,50 +411,49 @@ export default class extends PureComponent {
 
   // TAGS
 
-  handleNewTagNameChange(event) {
+  handleNewTagNameChange = event => {
     this.setState({ newTagName: event.target.value });
-  }
+  };
 
-  handleCreateNewTagSubmit(event) {
+  handleCreateNewTagSubmit = event => {
     event.preventDefault();
     const _ = this.state.newTagName;
     // this.setState({ newTagName: '' }); // Why doesn't it work?
     this.newTagNameInput.value = '';
     this.props.createTag(_);
-  }
+  };
 
-  handleClickOnTag(event) {
+  handleClickOnTag = event => {
     const tagName = event.target.textContent;
     const selected = this.props.selectedTags.indexOf(tagName) !== -1;
     selected ? this.props.unselectTag(tagName) : this.props.selectTag(tagName);
-  }
+  };
 
-  click_tagsSelectionMode(event) {
+  click_tagsSelectionMode = event => {
     this.props.setTagsSelectionMode(
       this.props.tagsSelectionMode === TAGS_SELECTION_MODE_AND ? TAGS_SELECTION_MODE_OR : TAGS_SELECTION_MODE_AND
     );
-  }
+  };
 
   // TABLE HELPERS
 
-  _rowClassName({ index }) {
+  _rowClassName = ({ index }) => {
     if (index < 0) {
       return 'headerRow';
     } else {
       return index % 2 === 0 ? 'evenRow' : 'oddRow';
     }
-  }
+  };
 
-  _sort({ sortBy, sortDirection }) {
-    const sortedPicturesList = this._sortList({ sortBy, sortDirection });
+  _sort = ({ sortBy, sortDirection }) => {
+    const sortedPicturesList = this._sortList(sortBy, sortDirection);
     this.setState({ sortBy, sortDirection, sortedPicturesList });
-  }
+  };
 
-  _sortList({ sortBy, sortDirection }) {
-    const sorted = lodash.sortBy(
-      this.props.picturesSelection,
-      _ => (typeof _[sortBy] === 'string' ? _[sortBy].toLowerCase() : _[sortBy])
-    );
+  _sortList(sortBy, sortDirection, initList) {
+    const list = initList || this.state.sortedPicturesList;
+
+    const sorted = lodash.sortBy(list, _ => (typeof _[sortBy] === 'string' ? _[sortBy].toLowerCase() : _[sortBy]));
 
     return sortDirection === SortDirection.DESC ? lodash.reverse(sorted) : sorted;
   }
