@@ -30,7 +30,13 @@ export default class extends Component {
 
     return (
       <_Root>
-        <_ToolButton onClick={resetZoomLevel}>1:1</_ToolButton>
+        <_ToolButton
+          onClick={e => {
+            resetZoomLevel();
+          }}
+        >
+          1:1
+        </_ToolButton>
         <Toolbar
           tool={tool}
           value={value}
