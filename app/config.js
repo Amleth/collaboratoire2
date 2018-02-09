@@ -17,7 +17,7 @@ export const fromConfigFile = () => {
     if (!config.hasOwnProperty('pictures_directories')) config.pictures_directories = [];
     if (!config.hasOwnProperty('disabled_pictures_directories')) config.disabled_pictures_directories = [];
   } catch (e) {
-    config = {};
+    config = { pictures_directories: [], disabled_pictures_directories: [] };
   }
 };
 
