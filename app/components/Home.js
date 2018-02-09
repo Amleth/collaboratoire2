@@ -262,7 +262,7 @@ export default class extends Component {
 
     const jobsDescriptions = [];
 
-    for (const specimen of specimens.slice(0, 30)) {
+    for (const specimen of specimens) {
       // If the specimen has not exactly one picture, we don't knwo how to deal with it
       if (specimen.m_.length !== 1) continue;
 

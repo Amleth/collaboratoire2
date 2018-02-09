@@ -16,6 +16,8 @@ export const fromConfigFile = () => {
     config = configYaml(config_file_path);
     if (!config.hasOwnProperty('pictures_directories')) config.pictures_directories = [];
     if (!config.hasOwnProperty('disabled_pictures_directories')) config.disabled_pictures_directories = [];
+    if (!config.pictures_directories) config.pictures_directories = [];
+    if (!config.disabled_pictures_directories) config.disabled_pictures_directories = [];
   } catch (e) {
     config = { pictures_directories: [], disabled_pictures_directories: [] };
   }
@@ -53,7 +55,7 @@ export const enableDirectory = _ => {
 };
 
 export const getAllPicturesDirectories = () => {
-  return config.pictures_directories;
+  return config.pictures_directories || [];
 };
 export const getDisabledPicturesDirectories = () => {
   return config.disabled_pictures_directories;
