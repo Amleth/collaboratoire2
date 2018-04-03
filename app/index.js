@@ -68,23 +68,6 @@ const go = picturesArray => {
     setTimeout(() => {
       store.dispatch(push('/'));
     }, 500);
-  } else {
-    setTimeout(() => {
-      store.dispatch({ type: 'CREATE_TAG', name: 'Blip' });
-      store.dispatch({ type: 'CREATE_TAG', name: 'Blop' });
-      store.dispatch({ type: 'CREATE_TAG', name: 'Bzz' });
-      store.dispatch({ type: 'CREATE_TAG', name: 'Bzzz' });
-      store.dispatch({ type: 'CREATE_TAG', name: 'Osric' });
-      store.dispatch({
-        type: CREATE_ANNOTATION_MEASURE_LINEAR,
-        pictureId: initialState.app.pictures_selection[0],
-        x1: 111,
-        y1: 111,
-        x2: 1111,
-        y2: 1111,
-        value_in_mm: 333
-      });
-    }, 500);
   }
 
   render(
@@ -107,12 +90,9 @@ const go = picturesArray => {
   }
 };
 
-// Wait for library init
+// Wait for pictures library init
 if (getAllPicturesDirectories().length > 0) {
-  render(
-    <Loading directories={getAllPicturesDirectories()} loadingEventEmitter={ee} />,
-    document.getElementById('root')
-  );
+  render(<Loading directories={getAllPicturesDirectories()} loadingEventEmitter={ee} />, document.getElementById('root'));
   ee.on(EVENT_COMPLETE, picturesArray => {
     go(picturesArray);
   });
