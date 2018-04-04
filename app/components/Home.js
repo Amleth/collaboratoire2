@@ -1,5 +1,4 @@
 import { remote, shell } from 'electron';
-import logger from 'electron-logger';
 import fs from 'fs-extra';
 import path from 'path';
 import promiseLimit from 'promise-limit';

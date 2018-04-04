@@ -2,7 +2,6 @@ import 'babel-polyfill';
 import Chance from 'chance';
 import { remote } from 'electron';
 import fs from 'fs-extra';
-import logger from 'electron-logger';
 import path from 'path';
 import React from 'react';
 import { render } from 'react-dom';
@@ -33,9 +32,6 @@ const CACHE_FILE = path.join(CACHE_DIR, 'cache.json');
 fs.ensureDirSync(CACHE_DIR);
 fs.ensureDirSync(USER_DATA_DIR);
 fs.ensureDirSync(THUMBNAILS_DIR);
-
-// Logger configuration
-logger.setOutput({ file: path.join(CACHE_DIR, 'log.log') });
 
 // Read config file
 setConfigFilePath(path.join(remote.app.getPath('home'), 'collaboratoire2-config.yml'));
